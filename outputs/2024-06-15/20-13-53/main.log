@@ -1,0 +1,454 @@
+[2024-06-15 20:13:53,934][flwr][INFO] - Starting Flower simulation, config: ServerConfig(num_rounds=10, round_timeout=None)
+[2024-06-15 20:13:59,976][flwr][INFO] - Flower VCE: Ray initialized with resources: {'memory': 6942574183.0, 'node:127.0.0.1': 1.0, 'object_store_memory': 2147483648.0, 'CPU': 8.0, 'node:__internal_head__': 1.0}
+[2024-06-15 20:13:59,977][flwr][INFO] - Initializing global parameters
+[2024-06-15 20:13:59,977][flwr][INFO] - Requesting initial parameters from one random client
+[2024-06-15 20:14:01,741][flwr][INFO] - Received initial parameters from one random client
+[2024-06-15 20:14:01,741][flwr][INFO] - Evaluating initial parameters
+[2024-06-15 20:14:02,648][flwr][INFO] - initial parameters (loss, other metrics): 181.90571975708008, {'accuarcy': 0.1014}
+[2024-06-15 20:14:02,649][flwr][INFO] - FL starting
+[2024-06-15 20:14:02,649][flwr][DEBUG] - fit_round 1: strategy sampled 10 clients (out of 100)
+[2024-06-15 20:14:03,155][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:03,266][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:03,336][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,397][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98817, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,668][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98822, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,669][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98816, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,690][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,702][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98819, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,709][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98818, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,720][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:06,720][flwr][DEBUG] - fit_round 1 received 0 results and 10 failures
+[2024-06-15 20:14:07,598][flwr][INFO] - fit progress: (1, 181.90571975708008, {'accuarcy': 0.1014}, 4.949457499999999)
+[2024-06-15 20:14:07,598][flwr][DEBUG] - evaluate_round 1: strategy sampled 25 clients (out of 100)
+[2024-06-15 20:14:47,613][flwr][DEBUG] - evaluate_round 1 received 25 results and 0 failures
+[2024-06-15 20:14:47,614][flwr][WARNING] - No evaluate_metrics_aggregation_fn provided
+[2024-06-15 20:14:47,615][flwr][DEBUG] - fit_round 2: strategy sampled 10 clients (out of 100)
+[2024-06-15 20:14:47,800][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98819, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,905][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98819, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,911][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98822, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,916][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98816, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,919][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98817, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,920][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,920][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98818, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,927][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,932][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,941][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98819, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:14:47,942][flwr][DEBUG] - fit_round 2 received 0 results and 10 failures
+[2024-06-15 20:14:48,911][flwr][INFO] - fit progress: (2, 181.90571975708008, {'accuarcy': 0.1014}, 46.262710500000004)
+[2024-06-15 20:14:48,911][flwr][DEBUG] - evaluate_round 2: strategy sampled 25 clients (out of 100)
+[2024-06-15 20:15:20,217][flwr][DEBUG] - evaluate_round 2 received 25 results and 0 failures
+[2024-06-15 20:15:20,219][flwr][DEBUG] - fit_round 3: strategy sampled 10 clients (out of 100)
+[2024-06-15 20:15:20,417][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,429][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,449][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,476][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,481][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,481][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,501][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,513][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,532][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98820, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,533][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:20,533][flwr][DEBUG] - fit_round 3 received 0 results and 10 failures
+[2024-06-15 20:15:21,424][flwr][INFO] - fit progress: (3, 181.90571975708008, {'accuarcy': 0.1014}, 78.77600970799999)
+[2024-06-15 20:15:21,424][flwr][DEBUG] - evaluate_round 3: strategy sampled 25 clients (out of 100)
+[2024-06-15 20:15:51,665][flwr][DEBUG] - evaluate_round 3 received 25 results and 0 failures
+[2024-06-15 20:15:51,667][flwr][DEBUG] - fit_round 4: strategy sampled 10 clients (out of 100)
+[2024-06-15 20:15:51,840][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98818, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,853][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,891][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98818, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,891][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,932][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,938][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98818, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,951][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98816, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,953][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98822, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,964][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98815, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,975][flwr][ERROR] - [36mray::launch_and_fit()[39m (pid=98821, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 148, in launch_and_fit
+    return maybe_call_fit(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 184, in maybe_call_fit
+    return client.fit(fit_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 297, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 49, in fit
+    train(self.model, self.trainloader, optim, self.device)
+TypeError: train() missing 1 required positional argument: 'device'
+[2024-06-15 20:15:51,976][flwr][DEBUG] - fit_round 4 received 0 results and 10 failures
+[2024-06-15 20:15:52,972][flwr][INFO] - fit progress: (4, 181.90571975708008, {'accuarcy': 0.1014}, 110.32522075)
+[2024-06-15 20:15:52,973][flwr][DEBUG] - evaluate_round 4: strategy sampled 25 clients (out of 100)
+[2024-06-15 20:16:30,994][flwr][ERROR] - [36mray::launch_and_evaluate()[39m (pid=98816, ip=127.0.0.1)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 160, in launch_and_evaluate
+    return maybe_call_evaluate(
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/client.py", line 205, in maybe_call_evaluate
+    return client.evaluate(evaluate_ins)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/flwr/client/app.py", line 321, in _evaluate
+    results = self.numpy_client.evaluate(parameters, ins.config)  # type: ignore
+  File "/Users/mohamedayman/Federated-Learning-Flower/client.py", line 58, in evaluate
+    loss, accuarcy = test(self.model, self.valloader, self.device)
+  File "/Users/mohamedayman/Federated-Learning-Flower/model.py", line 48, in test
+    for data in testloader:
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1318, in _next_data
+    self._shutdown_workers()
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/site-packages/torch/utils/data/dataloader.py", line 1443, in _shutdown_workers
+    w.join(timeout=_utils.MP_STATUS_CHECK_INTERVAL)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/multiprocessing/process.py", line 149, in join
+    res = self._popen.wait(timeout)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/multiprocessing/popen_fork.py", line 40, in wait
+    if not wait([self.sentinel], timeout):
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/opt/anaconda3/envs/flower_tutorial/lib/python3.9/selectors.py", line 416, in select
+    fd_event_list = self._selector.poll(timeout)
+ray.exceptions.TaskCancelledError: Task: TaskID(e723bf0438aa2e2cffffffffffffffffffffffff01000000) was cancelled.
