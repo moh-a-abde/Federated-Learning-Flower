@@ -23,11 +23,13 @@ jobs:
           virtualenv venv
           source venv/bin/activate
           pip install mamba
-          mamba create
-          mamba activate
+          mamba init
+          source ~/.bashrc
+          mamba create -n myenv python=3.x -y
+          mamba activate myenv
           pip install flwr==1.4.0
-          #pip install ray
-          #mamba install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch -y
+          pip install ray
+          mamba install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch -y
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
