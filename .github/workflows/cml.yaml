@@ -11,20 +11,23 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: '3.x'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       - uses: iterative/setup-cml@v1
       
-      - name: Train model
+      - name: Set up Python environment
         run: |
-          # Your ML workflow goes here
           python -m pip install --upgrade pip
-          pip install conda
-          conda create -n flower_tutorial python=3.9 -y
+          pip install virtualenv
+          virtualenv venv
+          source venv/bin/activate
+          pip install mamba
+          mamba create -n flower_tutorial python=3.9 -y
+          source activate flower_tutorial
           pip install flwr==1.4.0
           pip install ray==1.11.1
-          conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch -y
+          mamba install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch -y
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
