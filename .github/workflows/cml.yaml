@@ -26,7 +26,10 @@ jobs:
           mamba create
           mamba activate
           pip install flwr==1.4.0
-          pip install ray
+          # Clean removal of previous install
+          pip uninstall -y ray
+          # Install Ray with support for the dashboard + cluster launcher
+          pip install -U "ray[default] @ LINK_TO_WHEEL.whl"
           mamba install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch -y
           pip install hydra-core
           pip install -r requirements.txt
