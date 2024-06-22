@@ -19,6 +19,7 @@ jobs:
       - name: Train model
         run: |
           # Your ML workflow goes here
+          pip install conda
           conda create -n flower_tutorial python=3.9 -y
           pip install flwr==1.4.0
           pip install ray==1.11.1
