@@ -29,7 +29,7 @@ jobs:
           mamba activate
           pip install flwr==1.4.0
           #pip install ray
-          pip install pytorch
+          pip install torch
           #pip install torchvision
           #pip install torchaudio
           pip install hydra-core
