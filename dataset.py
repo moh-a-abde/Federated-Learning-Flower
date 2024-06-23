@@ -40,7 +40,7 @@ def get_csv_dataset(csv_file: str, transform=None):
     dataset = CSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = '/mnt/data/live_data_part1.csv'):
+def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = 'data/live_data_part1.csv'):
     # Transformation and dataset loading
     tr = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
     dataset = get_csv_dataset(csv_file, transform=tr)
