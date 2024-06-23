@@ -27,7 +27,7 @@ jobs:
           source ~/.bashrc
           mamba create
           mamba activate
-          pip install flwr==1.4.0
+          pip install -U flwr["simulation"]
           #pip install ray
           pip install torch
           pip install torchvision
