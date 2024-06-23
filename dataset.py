@@ -4,25 +4,25 @@ from torchvision.transforms import ToTensor, Normalize, Compose
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+import numpy as np
 
 class CSVDataset(Dataset):
     def __init__(self, csv_file, transform=None):
         self.data = pd.read_csv(csv_file)
         
         # Convert categorical variables
-        categorical_features = ['id.resp_p', 'id.resp_h', 'proto', 'query', 'uid']
-        numerical_features = ['id.orig_p']
+        self.categorical_features = ['id.resp_p', 'id.resp_h', 'proto', 'query', 'uid']
+        self.numerical_features = ['id.orig_p']
 
         # Define the column transformer with handle_unknown='ignore' for OneHotEncoder
         self.preprocessor = ColumnTransformer(
             transformers=[
-                ('num', StandardScaler(), numerical_features),
-                ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+                ('num', StandardScaler(), self.numerical_features),
+                ('cat', OneHotEncoder(handle_unknown='ignore'), self.categorical_features)
             ])
-
+        
         # Fit and transform the dataset
         self.data_transformed = self.preprocessor.fit_transform(self.data)
-        
         self.transform = transform
 
     def __len__(self):
@@ -30,7 +30,7 @@ class CSVDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.data_transformed[idx]
-        features = row[:-1].astype('float32')
+        features = row.astype('float32')
         label = self.data.iloc[idx, -1]  # Assuming the label is the last column
         if self.transform:
             features = self.transform(features)
@@ -71,4 +71,4 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
     # Creating test loader
     testloader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=2)
     
-    return trainloaders, valloaders, testloade
+    return trainloaders, valloaders, testloader
