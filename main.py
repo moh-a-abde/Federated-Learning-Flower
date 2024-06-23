@@ -19,7 +19,8 @@ def main(cfg: DictConfig):
     # 2. Prepare your dataset
     trainloaders, validationloaders, testloader = prepare_dataset(cfg.num_clients, 
                                                                    cfg.batch_size)
-    
+    # Check trainloaders, validationloaders, testloader
+    print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}")
     # 3. Define your clients
     client_fn = generate_client_fn(trainloaders, validationloaders, cfg.num_classes)
     
@@ -47,7 +48,7 @@ def main(cfg: DictConfig):
     save_path = HydraConfig.get().runtime.output_dir
     results_path = Path(save_path) / 'results.pkl'
 
-    results = {'history': history, 'anythingelse': "here"}
+    results = {'history': history}
 
     with open(str(results_path), 'wb') as h:
         pickle.dump(results, h, protocol=pickle.HIGHEST_PROTOCOL)
