@@ -28,7 +28,7 @@ jobs:
           mamba create
           mamba activate
           pip install -U flwr["simulation"]
-          #pip install ray
+          pip install -U "ray[default]"
           pip install torch
           pip install torchvision
           pip install torchaudio
