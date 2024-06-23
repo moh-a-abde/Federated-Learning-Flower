@@ -22,9 +22,6 @@ class PreprocessedCSVDataset(Dataset):
             ]
         )
         
-        # Drop rows with NA values in label_service
-        self.data.dropna(subset=['label_service'], inplace=True)
-        
         # Separate features and labels
         self.features = self.data.drop(columns=['label_service', 'ts'])
         self.labels = self.data['label_service'].astype(str)
