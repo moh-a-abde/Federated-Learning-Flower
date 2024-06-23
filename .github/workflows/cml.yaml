@@ -36,10 +36,3 @@ jobs:
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
-      - name: Write CML report
-        env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Post reports as comments in GitHub PRs
-          cat results.txt >> report.md
-          cml comment create report.md
