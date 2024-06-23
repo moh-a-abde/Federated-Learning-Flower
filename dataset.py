@@ -48,17 +48,20 @@ def get_csv_dataset(csv_file: str, transform=None):
     dataset = PreprocessedCSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = 'data/live_data_part1.csv'):
+def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = '/mnt/data/live_data_part1.csv'):
     # Load and preprocess the dataset
     dataset = get_csv_dataset(csv_file)
     
     # Check if dataset is loaded
     print(f"Total number of samples: {len(dataset)}")
 
-    # Split dataset into partitions
+    # Ensure no partition is empty by adjusting the partition lengths
     num_images = len(dataset) // num_partitions
     remainder = len(dataset) % num_partitions
     partition_len = [num_images + 1 if i < remainder else num_images for i in range(num_partitions)]
+    
+    # Ensure that no partition length is zero
+    partition_len = [length for length in partition_len if length > 0]
     
     datasets = random_split(dataset, partition_len, torch.Generator().manual_seed(2024))
 
@@ -70,6 +73,9 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
         num_val = int(val_ratio * num_total)
         num_train = num_total - num_val
 
+        if num_train == 0:
+            continue  # Skip if no training data
+        
         for_train, for_val = random_split(dataset_, [num_train, num_val], torch.Generator().manual_seed(2024))
 
         trainloaders.append(DataLoader(for_train, batch_size=batch_size, shuffle=True, num_workers=2))
