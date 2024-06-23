@@ -29,9 +29,14 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
 
     dataset = get_csv_dataset(csv_file, transform=tr)
 
-    # Split dataset into 'num_partitions' datasets
+    # Check if dataset is loaded
+    print(f"Total number of samples: {len(dataset)}")
+
+    # Split dataset into partitions
     num_images = len(dataset) // num_partitions
-    partition_len = [num_images] * num_partitions
+    remainder = len(dataset) % num_partitions
+    partition_len = [num_images + 1 if i < remainder else num_images for i in range(num_partitions)]
+    
     datasets = random_split(dataset, partition_len, torch.Generator().manual_seed(2024))
 
     # Create dataloaders with train+val support
