@@ -1,49 +1,56 @@
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision.transforms import ToTensor, Normalize, Compose
-import pandas as pd
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+import pandas as pd
 import numpy as np
 
-class CSVDataset(Dataset):
+class PreprocessedCSVDataset(Dataset):
     def __init__(self, csv_file, transform=None):
+        # Load and preprocess data
         self.data = pd.read_csv(csv_file)
         
-        # Convert categorical variables
+        # Define categorical and numerical features
         self.categorical_features = ['id.resp_p', 'id.resp_h', 'proto', 'query', 'uid']
         self.numerical_features = ['id.orig_p']
-
-        # Define the column transformer with handle_unknown='ignore' for OneHotEncoder
+        
+        # Define the column transformer
         self.preprocessor = ColumnTransformer(
             transformers=[
                 ('num', StandardScaler(), self.numerical_features),
                 ('cat', OneHotEncoder(handle_unknown='ignore'), self.categorical_features)
-            ])
+            ]
+        )
         
-        # Fit and transform the dataset
-        self.data_transformed = self.preprocessor.fit_transform(self.data)
+        # Drop rows with NA values in label_service
+        self.data.dropna(subset=['label_service'], inplace=True)
+        
+        # Separate features and labels
+        self.features = self.data.drop(columns=['label_service', 'ts'])
+        self.labels = self.data['label_service'].astype(str)
+        
+        # Fit and transform the features
+        self.features_transformed = self.preprocessor.fit_transform(self.features)
+        
         self.transform = transform
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        row = self.data_transformed[idx]
-        features = row.astype('float32')
-        label = self.data.iloc[idx, -1]  # Assuming the label is the last column
+        features = self.features_transformed[idx].astype('float32')
+        label = self.labels.iloc[idx]
         if self.transform:
             features = self.transform(features)
         return torch.tensor(features), torch.tensor(label, dtype=torch.long)
 
 def get_csv_dataset(csv_file: str, transform=None):
-    dataset = CSVDataset(csv_file, transform=transform)
+    dataset = PreprocessedCSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = 'data/live_data_part1.csv'):
-    # Transformation and dataset loading
-    tr = Compose([ToTensor(), Normalize((0.5,), (0.5,))])
-    dataset = get_csv_dataset(csv_file, transform=tr)
+def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = '/mnt/data/live_data_part1.csv'):
+    # Load and preprocess the dataset
+    dataset = get_csv_dataset(csv_file)
     
     # Check if dataset is loaded
     print(f"Total number of samples: {len(dataset)}")
