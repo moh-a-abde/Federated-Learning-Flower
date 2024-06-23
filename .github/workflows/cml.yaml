@@ -30,8 +30,8 @@ jobs:
           pip install flwr==1.4.0
           #pip install ray
           pip install torch
-          #pip install torchvision
-          #pip install torchaudio
+          pip install torchvision
+          pip install torchaudio
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
