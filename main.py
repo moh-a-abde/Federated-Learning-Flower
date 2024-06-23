@@ -17,8 +17,9 @@ def main(cfg: DictConfig):
     print(OmegaConf.to_yaml(cfg))
 
     # 2. Prepare your dataset
-    trainloaders, validationloaders, testloader = prepare_dataset(cfg.num_clients, 
-                                                                   cfg.batch_size)
+    trainloaders, validationloaders, testloader = prepare_dataset(cfg.num_partitions, 
+                                                                  cfg.num_clients, 
+                                                                  cfg.batch_size)
     # Check trainloaders, validationloaders, testloader
     print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}")
     # 3. Define your clients
