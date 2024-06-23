@@ -48,7 +48,7 @@ def get_csv_dataset(csv_file: str, transform=None):
     dataset = PreprocessedCSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = '/mnt/data/live_data_part1.csv'):
+def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = 'data/live_data_part1.csv'):
     # Load and preprocess the dataset
     dataset = get_csv_dataset(csv_file)
     
