@@ -28,7 +28,7 @@ jobs:
           mamba create
           mamba activate
           pip install -U flwr["simulation"]
-          pip install -U "ray[default]"
+          pip install https://s3-us-west-2.amazonaws.com/ray-wheels/master/4f2ec46c3adb6ba9f412f09a9732f436c4a5d0c9/ray-3.0.0.dev0-cp39-cp39-macosx_10_15_x86_64.whl
           pip install torch
           pip install torchvision
           pip install torchaudio
