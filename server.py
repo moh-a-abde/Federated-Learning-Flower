@@ -14,12 +14,12 @@ def get_on_fit_config(config: DictConfig):
     
     return fit_config_fn
 
-def get_evaluate_fn(num_classes: int, testloader):
+def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
 
 
     def evaluate_fn(server_round: int, parameters, config):
 
-        model = Net(num_classes)
+        model = Net(num_classes, input_dim)
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
