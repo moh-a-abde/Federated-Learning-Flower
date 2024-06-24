@@ -28,6 +28,7 @@ jobs:
           source ~/.bashrc
           mamba create
           mamba activate
+          pip install xgboost
           pip install scikit-learn
           pip install -U flwr["simulation"]
           pip install -U "ray[all]"
