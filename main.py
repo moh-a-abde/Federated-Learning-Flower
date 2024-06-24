@@ -17,12 +17,12 @@ def main(cfg: DictConfig):
     print(OmegaConf.to_yaml(cfg))
 
     # 2. Prepare your dataset
-    trainloaders, validationloaders, testloader = prepare_dataset(cfg.num_clients, 
+    trainloaders, validationloaders, testloader, input_dim = prepare_dataset(cfg.num_clients, 
                                                                   cfg.batch_size)
     # Check trainloaders, validationloaders, testloader
-    print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}")
+    print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}, Input dim: {input_dim}'")
     # 3. Define your clients
-    client_fn = generate_client_fn(trainloaders, validationloaders, cfg.num_classes)
+    client_fn = generate_client_fn(trainloaders, validationloaders, cfg.num_classes, input_dim)
     
     # 4. Define your strategy
     strategy = fl.server.strategy.FedAvg(fraction_fit=0.00001,
@@ -31,7 +31,7 @@ def main(cfg: DictConfig):
                                          min_evaluate_clients=cfg.num_clients_per_round_eval,
                                          min_available_clients=cfg.num_clients,
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
-                                         evaluate_fn=get_evaluate_fn(cfg.num_classes,
+                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim,
                                           testloader))
 
     # 5. Start simulation
@@ -40,7 +40,7 @@ def main(cfg: DictConfig):
         num_clients=cfg.num_clients,
         config=fl.server.ServerConfig(num_rounds=cfg.num_rounds),
         strategy=strategy,
-        client_resources={'num_cpus': 2},
+        client_resources={'num_cpus': 4},
 
     )
 
