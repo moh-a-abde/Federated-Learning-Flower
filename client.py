@@ -4,71 +4,52 @@ from flwr.common import NDArrays, Scalar
 import torch
 import flwr as fl
 
-from model import Net, train, test
+from model import XGBoostModel, train_xgboost_model, test_xgboost_model
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self,
-                 trainloader,
-                 valloader,
-                 num_classes, input_dim) -> None:
+    def __init__(self, trainloader, valloader, num_classes, input_dim) -> None:
         super().__init__()
 
         self.trainloader = trainloader
         self.valloader = valloader
-
-        self.model = Net(num_classes, input_dim)
-
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+        self.num_classes = num_classes
+        self.input_dim = input_dim
+        self.model = None
 
     def set_parameters(self, parameters):
+        # This can be left empty as XGBoost does not need this method
+        pass
 
-        params_dict = zip(self.model.state_dict().keys(), parameters)
-
-        state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
-
-        self.model.load_state_dict(state_dict, strict=True)
-    
-    
     def get_parameters(self, config: Dict[str, Scalar]):
-        
-        return [ val.cpu().numpy() for _, val in self.model.state_dict().items()]
+        # This can be left empty as XGBoost does not need this method
+        return []
 
-    
     def fit(self, parameters, config):
-
-        # copy parameters sent by the server into client's local model
-        self.set_parameters(parameters)
-
-        lr = config['lr']
-        momentum = config['momentum']
-        epochs = config['local_epochs']
-        optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
-
-        # do local training
-        train(self.model, self.trainloader, optim, epochs, self.device)
+        # Prepare data for training
+        X_train, y_train = self._prepare_data(self.trainloader)
+        
+        # Train the XGBoost model
+        self.model = train_xgboost_model(X_train, y_train, self.num_classes, self.input_dim)
 
         return self.get_parameters({}), len(self.trainloader), {}
-    
-    
+
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
-        
-        self.set_parameters(parameters)
+        X_val, y_val = self._prepare_data(self.valloader)
+        accuracy, report = test_xgboost_model(self.model, X_val, y_val)
+        loss = 1 - accuracy  # Mock loss as XGBoost does not provide a direct loss value
+        return float(loss), len(self.valloader), {'accuracy': accuracy}
 
-        loss, accuarcy = test(self.model, self.valloader, self.device)
-        
-        return float(loss), len(self.valloader), {'accuarcy': accuarcy}
-    
-
+    def _prepare_data(self, loader):
+        features_list, labels_list = [], []
+        for features, labels in loader:
+            features_list.append(features.numpy())
+            labels_list.append(labels.numpy())
+        return np.vstack(features_list), np.hstack(labels_list)
 
 def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
-
     def client_fn(cid: str):
-
         return FlowerClient(trainloader=trainloaders[int(cid)],
                             valloader=valloaders[int(cid)],
                             num_classes=num_classes,
-                            input_dim=input_dim)
-
-
+                            input_dim=input_dim).to_client()
     return client_fn
