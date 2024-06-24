@@ -5,7 +5,7 @@ from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 
 import flwr as fl
-
+import xgboost as xgb
 from dataset import prepare_dataset
 from client import generate_client_fn
 from server import get_on_fit_config, get_evaluate_fn
