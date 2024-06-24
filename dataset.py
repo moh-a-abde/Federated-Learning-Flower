@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import pandas as pd
 import numpy as np
@@ -24,24 +24,20 @@ class PreprocessedCSVDataset(Dataset):
         
         # Separate features and labels
         self.features = self.data.drop(columns=['label_service', 'ts'])
-        self.labels = self.data['label_service'].astype(str)
+        self.labels = self.data['label_service']
         
         # Fit and transform the features
         self.features_transformed = self.preprocessor.fit_transform(self.features)
-        
-        # Encode labels
-        self.label_encoder = LabelEncoder()
-        self.labels_encoded = self.label_encoder.fit_transform(self.labels)
-        
+        self.input_dim = self.features_transformed.shape[1]  # Define input_dim based on the transformed features' shape
         self.transform = transform
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        features = self.features_transformed[idx].astype('float32').todense()  # Convert sparse matrix to dense
-        features = np.expand_dims(features, axis=0)  # Add channel dimension for compatibility
-        label = self.labels_encoded[idx]  # Use encoded labels
+        features = self.features_transformed[idx].astype('float32').todense()
+        features = np.asarray(features).flatten()
+        label = self.labels.iloc[idx]
         if self.transform:
             features = self.transform(features)
         return torch.tensor(features), torch.tensor(label, dtype=torch.long)
@@ -86,4 +82,4 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
     # Creating test loader
     testloader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=2)
     
-    return trainloaders, valloaders, testloader
+    return trainloaders, valloaders, testloader, dataset.input_dim
