@@ -3,9 +3,8 @@ from omegaconf import DictConfig
 import torch
 import xgboost as xgb
 import numpy as np
-import os
 
-from model import XGBoostModel, test_xgboost_model, train_xgboost_model
+from model import XGBoostModel, test_xgboost_model
 
 def get_on_fit_config(config: DictConfig):
     def fit_config_fn(server_round: int):
@@ -18,15 +17,10 @@ def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
         # Prepare data for evaluation
         X_test, y_test = prepare_test_data(testloader)
 
-        if not os.path.exists(model_path):
-            # Train the model if it doesn't exist
-            X_train, y_train = prepare_test_data(testloader)  # Use the same data for training for simplicity
-            train_xgboost_model(X_train, y_train, num_classes, input_dim)
-
-        # Load the model
+        # Train the model for evaluation
         model = XGBoostModel(num_classes, input_dim)
-        model.model = xgb.Booster(model_file=model_path)
-        
+        model.train(X_test, y_test)  # Training with test data for simplicity
+
         accuracy, report = test_xgboost_model(model, X_test, y_test)
         loss = 1 - accuracy  # Mock loss as XGBoost does not provide a direct loss value
         return loss, {'accuracy': accuracy}
