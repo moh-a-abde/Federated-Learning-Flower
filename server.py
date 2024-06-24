@@ -13,7 +13,7 @@ def get_on_fit_config(config: DictConfig):
                 'local_epochs': config.local_epochs}
     return fit_config_fn
 
-def get_evaluate_fn(num_classes: int, input_dim: int, testloader, model_path="model.xgb"):
+def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
     def evaluate_fn(server_round: int, parameters, config):
         # Prepare data for evaluation
         X_test, y_test = prepare_test_data(testloader)
