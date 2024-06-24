@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 import pandas as pd
 import numpy as np
@@ -29,6 +29,10 @@ class PreprocessedCSVDataset(Dataset):
         # Fit and transform the features
         self.features_transformed = self.preprocessor.fit_transform(self.features)
         
+        # Encode labels
+        self.label_encoder = LabelEncoder()
+        self.labels_encoded = self.label_encoder.fit_transform(self.labels)
+        
         self.transform = transform
 
     def __len__(self):
@@ -36,7 +40,7 @@ class PreprocessedCSVDataset(Dataset):
 
     def __getitem__(self, idx):
         features = self.features_transformed[idx].astype('float32').todense()  # Convert sparse matrix to dense
-        label = self.labels.iloc[idx]
+        label = self.labels_encoded[idx]  # Use encoded labels
         if self.transform:
             features = self.transform(features)
         return torch.tensor(features), torch.tensor(label, dtype=torch.long)
