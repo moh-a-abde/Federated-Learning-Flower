@@ -35,7 +35,7 @@ class PreprocessedCSVDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        features = self.features_transformed[idx].astype('float32')
+        features = self.features_transformed[idx].astype('float32').todense()  # Convert sparse matrix to dense
         label = self.labels.iloc[idx]
         if self.transform:
             features = self.transform(features)
