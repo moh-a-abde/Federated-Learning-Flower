@@ -3,6 +3,7 @@ from typing import Dict
 from flwr.common import NDArrays, Scalar
 import torch
 import flwr as fl
+import numpy as np
 
 from model import XGBoostModel, train_xgboost_model, test_xgboost_model
 
