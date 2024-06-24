@@ -40,6 +40,7 @@ class PreprocessedCSVDataset(Dataset):
 
     def __getitem__(self, idx):
         features = self.features_transformed[idx].astype('float32').todense()  # Convert sparse matrix to dense
+        features = np.expand_dims(features, axis=0)  # Add channel dimension for compatibility
         label = self.labels_encoded[idx]  # Use encoded labels
         if self.transform:
             features = self.transform(features)
