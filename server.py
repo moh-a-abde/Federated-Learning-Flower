@@ -21,7 +21,7 @@ def get_evaluate_fn(num_classes: int, input_dim: int, testloader, model_path="mo
         if not os.path.exists(model_path):
             # Train the model if it doesn't exist
             X_train, y_train = prepare_test_data(testloader)  # Use the same data for training for simplicity
-            train_xgboost_model(X_train, y_train, num_classes, input_dim, save_path=model_path)
+            train_xgboost_model(X_train, y_train, num_classes, input_dim)
 
         # Load the model
         model = XGBoostModel(num_classes, input_dim)
