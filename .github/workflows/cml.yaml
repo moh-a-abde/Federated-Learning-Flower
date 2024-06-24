@@ -37,7 +37,4 @@ jobs:
           pip install torchaudio
           pip install hydra-core
           pip install -r requirements.txt
-
-      - name: Train Model
-        run: |
-          python main.py
+           python main.py
