@@ -56,5 +56,5 @@ def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
         return FlowerClient(trainloader=trainloaders[int(cid)],
                             valloader=valloaders[int(cid)],
                             num_classes=num_classes,
-                            input_dim=input_dim).to_client()
+                            input_dim=input_dim)
     return client_fn
