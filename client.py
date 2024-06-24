@@ -4,7 +4,7 @@ from flwr.common import NDArrays, Scalar
 import torch
 import flwr as fl
 import numpy as np
-
+import xgboost as xgb
 from model import XGBoostModel, train_xgboost_model, test_xgboost_model
 
 class FlowerClient(fl.client.NumPyClient):
