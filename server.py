@@ -2,6 +2,8 @@ from collections import OrderedDict
 from omegaconf import DictConfig
 import torch
 from model import XGBoostModel, test_xgboost_model
+import numpy as np
+
 
 def get_on_fit_config(config: DictConfig):
     def fit_config_fn(server_round: int):
