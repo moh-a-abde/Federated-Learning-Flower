@@ -10,13 +10,13 @@ class FlowerClient(fl.client.NumPyClient):
     def __init__(self,
                  trainloader,
                  valloader,
-                 num_classes) -> None:
+                 num_classes, input_dim) -> None:
         super().__init__()
 
         self.trainloader = trainloader
         self.valloader = valloader
 
-        self.model = Net(num_classes)
+        self.model = Net(num_classes, input_dim)
 
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -61,14 +61,14 @@ class FlowerClient(fl.client.NumPyClient):
     
 
 
-def generate_client_fn(trainloaders, valloaders, num_classes):
+def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
 
     def client_fn(cid: str):
 
         return FlowerClient(trainloader=trainloaders[int(cid)],
                             valloader=valloaders[int(cid)],
                             num_classes=num_classes,
-                            )
+                            input_dim=input_dim)
 
 
     return client_fn
