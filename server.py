@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from omegaconf import DictConfig
 import torch
+import xgboost as xgb
 from model import XGBoostModel, test_xgboost_model
 import numpy as np
 
