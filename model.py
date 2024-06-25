@@ -6,8 +6,7 @@ class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
         self.num_classes = num_classes
         self.input_dim = input_dim
-        self.model = xgb.Booster()
-        self.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': num_classes})
+        self.model = None  # We'll initialize this later when we have data
     
     def train_model(self, trainloader, optimizer, epochs, device: str):
         train_features, train_labels = self._loader_to_numpy(trainloader)
