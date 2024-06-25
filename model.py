@@ -6,24 +6,20 @@ class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
         self.num_classes = num_classes
         self.input_dim = input_dim
-        self.model = None
+        self.model = xgb.Booster()
+        self.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': num_classes})
     
     def train_model(self, trainloader, optimizer, epochs, device: str):
         train_features, train_labels = self._loader_to_numpy(trainloader)
         dtrain = xgb.DMatrix(train_features, label=train_labels)
-        
-        params = {
-            'max_depth': 6,
-            'eta': 0.3,
-            'objective': 'multi:softprob',
-            'num_class': self.num_classes
-        }
+    
+        params = self.model.get_params()
         num_rounds = epochs
-        
+    
         # Add learning rate scheduler
         evals_result = {}
-        self.model = xgb.train(params, dtrain, num_rounds, evals=[(dtrain, 'train')], evals_result=evals_result)
-        
+        self.model = xgb.train(params, dtrain, num_rounds, evals=[(dtrain, 'train')], evals_result=evals_result, xgb_model=self.model)
+    
         # Early stopping
         val_losses = evals_result['train']['mlogloss']
         if early_stopping(val_losses):
