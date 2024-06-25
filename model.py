@@ -29,7 +29,7 @@ def train(net, trainloader, optimizer, epochs, device: str):
     for _ in range(epochs):
         for features, labels in trainloader:
             features, labels = features.to(device), labels.to(device)
-            optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+            optimizer = torch.optim.Adam()
 
             loss_Adam = []
             n_iter = 20
