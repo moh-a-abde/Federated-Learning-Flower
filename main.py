@@ -5,6 +5,7 @@ from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 
 import flwr as fl
+from pprint import pprint
 
 from dataset import prepare_dataset
 from client import generate_client_fn
