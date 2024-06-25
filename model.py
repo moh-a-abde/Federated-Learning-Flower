@@ -5,17 +5,21 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self, num_classes: int, input_dim: int) -> None:
         super(Net, self).__init__()
-        # Increase the number of neurons in hidden layers
-        self.fc1 = nn.Linear(input_dim, 256)
-        self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, num_classes)
+        # Increase the number of neurons in hidden layers and add another layer
+        self.fc1 = nn.Linear(input_dim, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, num_classes)
+        # Add dropout for regularization
+        self.dropout = nn.Dropout(0.3)
     
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        
         x = F.relu(self.fc1(x))
+        x = self.dropout(x)
         x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.dropout(x)
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
         return x
 
 def train(net, trainloader, optimizer, epochs, device: str):
@@ -26,6 +30,7 @@ def train(net, trainloader, optimizer, epochs, device: str):
     # Add learning rate scheduler
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=True)
     
+    val_losses = []
     for epoch in range(epochs):
         running_loss = 0.0
         for features, labels in trainloader:
@@ -36,6 +41,8 @@ def train(net, trainloader, optimizer, epochs, device: str):
             loss = criterion(outputs, labels)
             
             loss.backward()
+            # Add gradient clipping
+            torch.nn.utils.clip_grad_norm_(net.parameters(), max_norm=1.0)
             optimizer.step()
             
             running_loss += loss.item()
@@ -44,6 +51,12 @@ def train(net, trainloader, optimizer, epochs, device: str):
         epoch_loss = running_loss / len(trainloader)
         print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
         scheduler.step(epoch_loss)
+        val_losses.append(epoch_loss)
+        
+        # Check for early stopping
+        if early_stopping(val_losses):
+            print("Early stopping triggered")
+            break
 
 def test(net, testloader, device: str):
     criterion = torch.nn.CrossEntropyLoss()
@@ -62,7 +75,6 @@ def test(net, testloader, device: str):
     avg_loss = total_loss / len(testloader)
     return avg_loss, accuracy
 
-# Add a function for early stopping
 def early_stopping(val_losses, patience=10):
     if len(val_losses) > patience:
         if all(val_losses[-1] > val_losses[-(i+2)] for i in range(patience)):
