@@ -10,23 +10,13 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
         self.fc4 = nn.Linear(64, num_classes)
-        
-        # Add dropout for regularization
-        self.dropout = nn.Dropout(0.3)
-        
-        # Add batch normalization layers
-        self.bn1 = nn.BatchNorm1d(256)
-        self.bn2 = nn.BatchNorm1d(128)
-        self.bn3 = nn.BatchNorm1d(64)
+    
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # Apply dropout and batch normalization after each layer
         x = F.relu(self.bn1(self.fc1(x)))
-        x = self.dropout(x)
         x = F.relu(self.bn2(self.fc2(x)))
-        x = self.dropout(x)
         x = F.relu(self.bn3(self.fc3(x)))
-        x = self.dropout(x)
         x = self.fc4(x)
         return x
 
