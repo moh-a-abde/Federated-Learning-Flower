@@ -1,4 +1,3 @@
-import torch
 import xgboost as xgb
 from sklearn.metrics import accuracy_score
 import numpy as np
