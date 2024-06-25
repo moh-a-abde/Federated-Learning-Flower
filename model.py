@@ -28,7 +28,7 @@ def train(net, trainloader, optimizer, epochs, device: str):
     net.to(device)
     
     # Add learning rate scheduler
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5, verbose=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.01, patience=2, verbose=True)
     
     val_losses = []
     for epoch in range(epochs):
