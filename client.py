@@ -1,60 +1,51 @@
+from collections import OrderedDict
+from typing import Dict
+from flwr.common import NDArrays, Scalar
+import torch
+import flwr as fl
+import torch.optim as optim
 import xgboost as xgb
-from sklearn.metrics import accuracy_score
-import numpy as np
+import pickle
 
-class Net:
-    def __init__(self, num_classes: int, input_dim: int) -> None:
-        self.num_classes = num_classes
-        self.input_dim = input_dim
-        self.model = None
-    
-    def train_model(self, trainloader, optimizer, epochs, device: str):
-        train_features, train_labels = self._loader_to_numpy(trainloader)
-        dtrain = xgb.DMatrix(train_features, label=train_labels)
-        
-        params = {
-            'max_depth': 6,
-            'eta': 0.3,
-            'objective': 'multi:softprob',
-            'num_class': self.num_classes
-        }
-        num_rounds = epochs
-        
-        # Add learning rate scheduler
-        evals_result = {}
-        self.model = xgb.train(params, dtrain, num_rounds, evals=[(dtrain, 'train')], evals_result=evals_result)
-        
-        # Early stopping
-        val_losses = evals_result['train']['mlogloss']
-        if early_stopping(val_losses):
-            print("Early stopping triggered")
+from model import Net, train, test
 
-    def test_model(self, testloader, device: str):
-        test_features, test_labels = self._loader_to_numpy(testloader)
-        dtest = xgb.DMatrix(test_features)
-        predictions = self.model.predict(dtest)
-        predictions = np.argmax(predictions, axis=1)  # Get the index of the max logit
-        
-        accuracy = accuracy_score(test_labels, predictions)
-        avg_loss = np.mean(predictions != test_labels)
-        return avg_loss, accuracy
+class FlowerClient(fl.client.NumPyClient):
+    def __init__(self, trainloader, valloader, num_classes, input_dim) -> None:
+        super().__init__()
+        self.trainloader = trainloader
+        self.valloader = valloader
+        self.model = Net(num_classes, input_dim)
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    def _loader_to_numpy(self, loader):
-        features, labels = [], []
-        for data, label in loader:
-            features.append(data.numpy())
-            labels.append(label.numpy())
-        return np.vstack(features), np.hstack(labels)
+    def set_parameters(self, parameters):
+        # Deserialize the parameters (assuming they are stored in a dictionary format)
+        self.model.model = xgb.Booster()
+        self.model.model.load_model(parameters)
 
-def early_stopping(val_losses, patience=10):
-    if len(val_losses) > patience:
-        if all(val_losses[-1] > val_losses[-(i+2)] for i in range(patience)):
-            return True
-    return False
+    def get_parameters(self, config: Dict[str, Scalar]):
+        # Serialize the model parameters
+        return self.model.model.save_raw()
 
-# Standalone functions to be imported
-def train(net, trainloader, optimizer, epochs, device: str):
-    net.train_model(trainloader, optimizer, epochs, device)
+    def fit(self, parameters, config):
+        # Set the parameters
+        self.set_parameters(parameters)
+        lr = config['lr']
+        momentum = config['momentum']
+        epochs = config['local_epochs']
+        # Dummy optimizer (not used in XGBoost)
+        optim = None
+        train(self.model, self.trainloader, optim, epochs, self.device)
+        return self.get_parameters({}), len(self.trainloader), {}
 
-def test(net, testloader, device: str):
-    return net.test_model(testloader, device)
+    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
+        self.set_parameters(parameters)
+        loss, accuracy = test(self.model, self.valloader, self.device)
+        return float(loss), len(self.valloader), {'accuracy': accuracy}
+
+def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
+    def client_fn(cid: str):
+        return FlowerClient(trainloader=trainloaders[int(cid)],
+                            valloader=valloaders[int(cid)],
+                            num_classes=num_classes,
+                            input_dim=input_dim)
+    return client_fn
