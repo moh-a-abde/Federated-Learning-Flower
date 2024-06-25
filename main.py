@@ -52,7 +52,7 @@ def main(cfg: DictConfig):
     results = {'history': history}
 
     # Load the pickle file
-    with open(results_path, 'rb') as file:
+    with open(str(results_path), 'wb') as file:
         data = pickle.load(file)
 
     # Pretty print the data
