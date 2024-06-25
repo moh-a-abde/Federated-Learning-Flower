@@ -9,7 +9,8 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(input_dim, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, num_classes)
+        self.fc4 = nn.Linear(128, 64)
+        self.fc5 = nn.Linear(64, num_classes)
     
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -17,7 +18,8 @@ class Net(nn.Module):
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
-        x = self.fc4(x)
+        x = F.relu(self.fc4(x))
+        x = self.fc5(x)
         return x
 
 def train(net, trainloader, optimizer, epochs, device: str):
