@@ -18,11 +18,13 @@ class FlowerClient(fl.client.NumPyClient):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     def set_parameters(self, parameters):
-        # Deserialize the parameters (assuming they are stored in a dictionary format)
+        # Deserialize the parameters (assuming they are stored in a binary format)
         self.model.model = xgb.Booster()
         self.model.model.load_model(parameters)
 
     def get_parameters(self, config: Dict[str, Scalar]):
+        if self.model.model is None:
+            raise ValueError("Model is not initialized or trained yet.")
         # Serialize the model parameters
         return self.model.model.save_raw()
 
