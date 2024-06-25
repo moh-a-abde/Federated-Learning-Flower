@@ -12,12 +12,18 @@ class Net:
         train_features, train_labels = self._loader_to_numpy(trainloader)
         dtrain = xgb.DMatrix(train_features, label=train_labels)
     
-        params = self.model.get_params()
-        num_rounds = epochs
+        params = {
+            'max_depth': 6,
+            'eta': 0.3,
+            'objective': 'multi:softprob',
+            'num_class': self.num_classes
+        }
     
-        # Add learning rate scheduler
-        evals_result = {}
-        self.model = xgb.train(params, dtrain, num_rounds, evals=[(dtrain, 'train')], evals_result=evals_result, xgb_model=self.model)
+        if self.model is None:
+            self.model = xgb.train(params, dtrain, num_boost_round=epochs)
+        else:
+            self.model = xgb.train(params, dtrain, num_boost_round=epochs, xgb_model=self.model)
+    
     
         # Early stopping
         val_losses = evals_result['train']['mlogloss']
