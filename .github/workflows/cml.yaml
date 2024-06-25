@@ -37,34 +37,3 @@ jobs:
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
-
-          mkdir -p outputs
-          mv *.png outputs/
-
-      - name: Upload outputs
-        uses: actions/upload-artifact@v2
-        with:
-          name: plots
-          path: outputs/
-
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v4
-        with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-          
-              const { Octokit } = require("@octokit/rest");
-              const token = process.env.GITHUB_TOKEN;
-              const octokit = new Octokit({ auth: token });
-              const context = github.context;
-              const prNumber = context.payload.pull_request.number;
-
-              const images = ["data_distributions.png", "feature_importance.png"];
-              const commentBody = images.map(img => `![${img}](https://github.com/${context.repo.owner}/${context.repo.repo}/suites/${context.run_id}/artifacts/${artifact_id})`).join('\n');
-
-              await octokit.issues.createComment({
-              ...context.repo,
-            issue_number: prNumber,
-            body: commentBody,
-              });
