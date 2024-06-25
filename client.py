@@ -45,8 +45,8 @@ class FlowerClient(fl.client.NumPyClient):
         momentum = config['momentum']
         epochs = config['local_epochs']
         # Define the optimizer (e.g., Adam)
-        optim = optim.Adam(self.model.parameters(), lr=lr, momentum=momentum)
-        #optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
+        
+        optim = torch.optim.Adam(self.model.parameters(), lr=lr, momentum=momentum)
 
         # do local training
         train(self.model, self.trainloader, optim, epochs, self.device)
