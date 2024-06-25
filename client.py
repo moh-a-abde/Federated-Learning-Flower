@@ -26,12 +26,23 @@ class FlowerClient(fl.client.NumPyClient):
             self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
 
     def get_parameters(self, config: Dict[str, Scalar]):
-        if self.model.model is None:
-            # Initialize the model with default parameters
-            self.model.model = xgb.Booster()
-            # You might want to set some default parameters here
-            self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
-        return self.model.model.save_raw()
+    if self.model.model is None:
+        # Create a dummy dataset to initialize the model
+        dummy_data = np.random.rand(10, self.model.input_dim)
+        dummy_labels = np.random.randint(0, self.model.num_classes, 10)
+        dtrain = xgb.DMatrix(dummy_data, label=dummy_labels)
+        
+        params = {
+            'max_depth': 6,
+            'eta': 0.3,
+            'objective': 'multi:softprob',
+            'num_class': self.model.num_classes
+        }
+        
+        # Train the model with one iteration
+        self.model.model = xgb.train(params, dtrain, num_boost_round=1)
+    
+    return self.model.model.save_raw()
     
     def fit(self, parameters, config):
         self.set_parameters(parameters)
