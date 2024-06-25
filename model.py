@@ -8,7 +8,7 @@ class Net(nn.Module):
         # Increase the number of neurons in hidden layers
         self.fc1 = nn.Linear(input_dim, 256)
         self.fc2 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(128, num_classes)
+        self.fc3 = nn.Linear(128, num_classes)
     
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
