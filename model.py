@@ -13,10 +13,10 @@ class Net(nn.Module):
     
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # Apply dropout and batch normalization after each layer
-        x = F.relu(self.bn1(self.fc1(x)))
-        x = F.relu(self.bn2(self.fc2(x)))
-        x = F.relu(self.bn3(self.fc3(x)))
+        
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
         x = self.fc4(x)
         return x
 
