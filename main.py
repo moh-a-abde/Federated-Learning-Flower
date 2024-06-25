@@ -50,13 +50,6 @@ def main(cfg: DictConfig):
     results_path = Path(save_path) / 'results.pkl'
 
     results = {'history': history}
-
-    # Load the pickle file
-    with open(str(results_path), 'wb') as file:
-        data = pickle.load(file)
-
-    # Pretty print the data
-    pprint(data)
     
 if __name__ == "__main__":
     main()
