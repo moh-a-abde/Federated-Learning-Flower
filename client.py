@@ -3,6 +3,7 @@ from typing import Dict
 from flwr.common import NDArrays, Scalar
 import torch
 import flwr as fl
+import torch.optim as optim
 
 from model import Net, train, test
 
@@ -43,7 +44,9 @@ class FlowerClient(fl.client.NumPyClient):
         lr = config['lr']
         momentum = config['momentum']
         epochs = config['local_epochs']
-        optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
+        # Define the optimizer (e.g., Adam)
+        optim = optim.Adam(self.model.parameters(), lr=lr, momentum=momentum))
+        #optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
 
         # do local training
         train(self.model, self.trainloader, optim, epochs, self.device)
