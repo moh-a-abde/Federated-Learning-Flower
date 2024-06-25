@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from typing import Dict
 from flwr.common import NDArrays, Scalar
-import torch
 import flwr as fl
 import numpy as np
 
@@ -54,5 +53,5 @@ def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
         return FlowerClient(trainloader=trainloaders[int(cid)],
                             valloader=valloaders[int(cid)],
                             num_classes=num_classes,
-                            input_dim=input_dim)
+                            input_dim=input_dim).to_client()
     return client_fn
