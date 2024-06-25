@@ -37,11 +37,3 @@ jobs:
           pip install hydra-core
           pip install -r requirements.txt
           python main.py
-
-          echo " ##Model Metrics " > report.md
-          cat results.pkl >> report.md
-          echo " ##Data vizualization "
-          cml-publish feature_importance.png --md >> report.md
-          cml-publish residuals.png --md >> report.md
-
-          cml-send-comment report.md
