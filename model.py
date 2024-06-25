@@ -9,8 +9,8 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(input_dim, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(128, 64)
-        self.fc5 = nn.Linear(64, num_classes)
+        self.fc4 = nn.Linear(64, 32)
+        self.fc5 = nn.Linear(32, num_classes)
     
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
