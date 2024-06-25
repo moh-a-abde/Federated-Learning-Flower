@@ -32,7 +32,7 @@ def main(cfg: DictConfig):
                                          min_available_clients=cfg.num_clients,
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
                                          evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim,
-                                          trainloaders))
+                                          testloader))
 
     # 5. Start simulation
     history = fl.simulation.start_simulation(
@@ -50,8 +50,12 @@ def main(cfg: DictConfig):
 
     results = {'history': history}
 
-    with open(str(results_path), 'wb') as h:
-        pickle.dump(results, h, protocol=pickle.HIGHEST_PROTOCOL)
+    # Load the pickle file
+    with open(results_path, 'rb') as file:
+        data = pickle.load(file)
 
+    # Pretty print the data
+    pprint(data)
+    
 if __name__ == "__main__":
     main()
