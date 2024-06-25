@@ -16,15 +16,23 @@ class FlowerClient(fl.client.NumPyClient):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     def set_parameters(self, parameters):
-        if self.model.model is None:
+        if parameters is not None:
+            if self.model.model is None:
+                self.model.model = xgb.Booster()
+            self.model.model.load_model(parameters)
+        else:
+            # Initialize with default parameters if None is provided
             self.model.model = xgb.Booster()
-        self.model.model.load_model(parameters)
+            self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
 
     def get_parameters(self, config: Dict[str, Scalar]):
         if self.model.model is None:
-            raise ValueError("Model is not initialized or trained yet.")
+            # Initialize the model with default parameters
+            self.model.model = xgb.Booster()
+            # You might want to set some default parameters here
+            self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
         return self.model.model.save_raw()
-
+    
     def fit(self, parameters, config):
         self.set_parameters(parameters)
         lr = config['lr']
