@@ -8,7 +8,7 @@ class XGBoostModel:
         self.input_dim = input_dim
         self.model = None
 
-    def train(self, X_train, y_train):
+    def train(self, X_train, y_train, save_path=None):
         # Transform numpy array into DMatrix format for xgboost to handle more efficiently
         train = xgb.DMatrix(X_train, label=y_train)
 
@@ -42,14 +42,18 @@ class XGBoostModel:
         # Train the model with the best number of boosting rounds
         self.model = xgb.train(param, train, num_boost_round=best_num_boost_round)
 
+        if save_path:
+            # Save the model if a path is provided
+            self.model.save_model(save_path)
+
     def predict(self, X_test):
         test = xgb.DMatrix(X_test)
         predictions = self.model.predict(test)
         return predictions
 
-def train_xgboost_model(X_train, y_train, num_classes, input_dim):
+def train_xgboost_model(X_train, y_train, num_classes, input_dim, save_path=None):
     xgb_model = XGBoostModel(num_classes, input_dim)
-    xgb_model.train(X_train, y_train)
+    xgb_model.train(X_train, y_train, save_path)
     return xgb_model
 
 def test_xgboost_model(xgb_model, X_test, y_test):
@@ -57,13 +61,3 @@ def test_xgboost_model(xgb_model, X_test, y_test):
     accuracy = accuracy_score(y_test, predictions)
     report = classification_report(y_test, predictions)
     return accuracy, report
-
-# Example usage:
-# X_train, X_test, y_train, y_test = ... (load your data here)
-# num_classes = ... (number of classes in your dataset)
-# input_dim = ... (number of features in your dataset)
-# xgb_model = train_xgboost_model(X_train, y_train, num_classes, input_dim)
-# accuracy, report = test_xgboost_model(xgb_model, X_test, y_test)
-# print(f'Accuracy: {accuracy}')
-# print('Classification Report:')
-# print(report)
