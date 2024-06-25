@@ -9,7 +9,7 @@ class Net:
         self.input_dim = input_dim
         self.model = None
     
-    def train(self, trainloader, optimizer, epochs, device: str):
+    def train_model(self, trainloader, optimizer, epochs, device: str):
         train_features, train_labels = self._loader_to_numpy(trainloader)
         dtrain = xgb.DMatrix(train_features, label=train_labels)
         
@@ -30,7 +30,7 @@ class Net:
         if early_stopping(val_losses):
             print("Early stopping triggered")
 
-    def test(self, testloader, device: str):
+    def test_model(self, testloader, device: str):
         test_features, test_labels = self._loader_to_numpy(testloader)
         dtest = xgb.DMatrix(test_features)
         predictions = self.model.predict(dtest)
@@ -52,3 +52,10 @@ def early_stopping(val_losses, patience=10):
         if all(val_losses[-1] > val_losses[-(i+2)] for i in range(patience)):
             return True
     return False
+
+# Standalone functions to be imported
+def train(net, trainloader, optimizer, epochs, device: str):
+    net.train_model(trainloader, optimizer, epochs, device)
+
+def test(net, testloader, device: str):
+    return net.test_model(testloader, device)
