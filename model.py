@@ -30,8 +30,17 @@ def train(net, trainloader, optimizer, epochs, device: str):
         for features, labels in trainloader:
             features, labels = features.to(device), labels.to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+            loss_Adam = []
+            n_iter = 20
             loss = criterion(net(features), labels)
+            # store loss into list
+            loss_Adam.append(loss.item())
+            # zeroing gradients after each iteration
+            optimizer.zero_grad()
+            # backward pass for computing the gradients of the loss w.r.t to learnable parameters
             loss.backward()
+            # updateing the parameters after each iteration
             optimizer.step()
 
 def test(net, testloader, device: str):
