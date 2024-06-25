@@ -32,7 +32,7 @@ def main(cfg: DictConfig):
                                          min_available_clients=cfg.num_clients,
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
                                          evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim,
-                                          testloader))
+                                          trainloaders))
 
     # 5. Start simulation
     history = fl.simulation.start_simulation(
