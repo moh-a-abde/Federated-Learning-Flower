@@ -26,7 +26,7 @@ class Net(nn.Module):
         return x
 
 def train(net, trainloader, optimizer, epochs, device: str):
-    criterion = torch.nn.HingeEmbeddingLoss()
+    criterion = torch.nn.CrossEntropyLoss()
     net.train()
     net.to(device)
     
