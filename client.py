@@ -4,6 +4,7 @@ from flwr.common import NDArrays, Scalar
 import torch
 import flwr as fl
 import xgboost as xgb
+import numpy as np
 
 from model import Net, train, test
 
