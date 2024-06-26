@@ -16,19 +16,19 @@ class FlowerClient(fl.client.NumPyClient):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     def set_parameters(self, parameters):
-    if parameters is not None:
-        if self.model.model is None:
-            # Create a dummy dataset to initialize the model
-            dummy_data = np.random.rand(10, self.model.input_dim)
-            dummy_labels = np.random.randint(0, self.model.num_classes, 10)
-            dtrain = xgb.DMatrix(dummy_data, label=dummy_labels)
-            self.model.model = xgb.Booster(model_file=parameters)
-            self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
+        if parameters is not None:
+            if self.model.model is None:
+                # Create a dummy dataset to initialize the model
+                dummy_data = np.random.rand(10, self.model.input_dim)
+                dummy_labels = np.random.randint(0, self.model.num_classes, 10)
+                dtrain = xgb.DMatrix(dummy_data, label=dummy_labels)
+                self.model.model = xgb.Booster(model_file=parameters)
+                self.model.model.set_param({'max_depth': 6, 'eta': 0.3, 'objective': 'multi:softprob', 'num_class': self.model.num_classes})
+            else:
+                self.model.model.load_model(parameters)
         else:
-            self.model.model.load_model(parameters)
-    else:
-        # Initialize with default parameters if None is provided
-        self.get_parameters({})  # This will create and initialize the model
+            # Initialize with default parameters if None is provided
+            self.get_parameters({})  # This will create and initialize the model
 
     def get_parameters(self, config: Dict[str, Scalar]):
         if self.model.model is None:
