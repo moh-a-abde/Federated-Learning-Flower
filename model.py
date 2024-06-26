@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from typing import Tuple
 
-class XGBoostModel:
+class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
         self.num_classes = num_classes
         self.input_dim = input_dim
