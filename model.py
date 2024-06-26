@@ -2,43 +2,41 @@ import xgboost as xgb
 from sklearn.metrics import accuracy_score
 import numpy as np
 
+import xgboost as xgb
+import numpy as np
+
 class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
         self.num_classes = num_classes
         self.input_dim = input_dim
-        self.model = None  # We'll initialize this later when we have data
-    
-    def train_model(self, trainloader, optimizer, epochs, device: str):
-        train_features, train_labels = self._loader_to_numpy(trainloader)
-        dtrain = xgb.DMatrix(train_features, label=train_labels)
-    
-        params = {
+        self.model = None
+        self.params = {
             'max_depth': 6,
             'eta': 0.3,
             'objective': 'multi:softprob',
-            'num_class': self.num_classes
+            'num_class': num_classes
         }
-    
-        if self.model is None:
-            self.model = xgb.train(params, dtrain, num_boost_round=epochs)
-        else:
-            self.model = xgb.train(params, dtrain, num_boost_round=epochs, xgb_model=self.model)
-    
-    
-        # Early stopping
-        val_losses = evals_result['train']['mlogloss']
-        if early_stopping(val_losses):
-            print("Early stopping triggered")
 
-    def test_model(self, testloader, device: str):
-        test_features, test_labels = self._loader_to_numpy(testloader)
-        dtest = xgb.DMatrix(test_features)
-        predictions = self.model.predict(dtest)
-        predictions = np.argmax(predictions, axis=1)  # Get the index of the max logit
+    def get_model_bytes(self):
+        if self.model is None:
+            return None
+        return self.model.save_raw()
+
+    def set_model_bytes(self, model_bytes):
+        if model_bytes is not None:
+            self.model = xgb.Booster()
+            self.model.load_model(bytearray(model_bytes))
+        else:
+            self.model = None
+
+    def train_model(self, trainloader, epochs):
+        train_features, train_labels = self._loader_to_numpy(trainloader)
+        dtrain = xgb.DMatrix(train_features, label=train_labels)
         
-        accuracy = accuracy_score(test_labels, predictions)
-        avg_loss = np.mean(predictions != test_labels)
-        return avg_loss, accuracy
+        if self.model is None:
+            self.model = xgb.train(self.params, dtrain, num_boost_round=epochs)
+        else:
+            self.model = xgb.train(self.params, dtrain, num_boost_round=epochs, xgb_model=self.model)
 
     def _loader_to_numpy(self, loader):
         features, labels = [], []
