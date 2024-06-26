@@ -33,7 +33,6 @@ def train(net, trainloader, optimizer, epochs, device: str):
     # Add learning rate scheduler
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.01, patience=2, verbose=True)
 
-    train_losses = []
     val_losses = []
     for epoch in range(epochs):
         running_loss = 0.0
@@ -55,11 +54,7 @@ def train(net, trainloader, optimizer, epochs, device: str):
         epoch_loss = running_loss / len(trainloader)
         print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
         scheduler.step(epoch_loss)
-        train_losses.append(epoch_loss)
-        
-        # Validation step
-        val_loss, val_accuracy = test(net, testloader, device)
-        val_losses.append(val_loss)
+        val_losses.append(epoch_loss)
         
         # Check for early stopping
         if early_stopping(val_losses):
