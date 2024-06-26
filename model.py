@@ -12,7 +12,7 @@ class Net(nn.Module):
         self.fc4 = nn.Linear(128, 64)
         self.fc5 = nn.Linear(64, num_classes)
         # Add dropout for regularization
-        self.dropout = nn.Dropout(0.3)
+        self.dropout = nn.Dropout(0.5)
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = F.relu(self.fc1(x))
