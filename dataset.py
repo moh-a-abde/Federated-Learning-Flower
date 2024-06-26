@@ -11,8 +11,9 @@ class PreprocessedCSVDataset(Dataset):
         self.data = pd.read_csv(csv_file)
         
         # Define categorical and numerical features
-        self.categorical_features = ['id.resp_p', 'id.resp_h', 'proto', 'query', 'uid']
-        self.numerical_features = ['id.orig_p']
+        self.categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
+        self.numerical_features = ['id.orig_p', 'orig_pkts',	'orig_ip_bytes',	'resp_pkts', 'missed_bytes'
+        , 'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
         
         # Define the column transformer
         self.preprocessor = ColumnTransformer(
@@ -23,8 +24,8 @@ class PreprocessedCSVDataset(Dataset):
         )
         
         # Separate features and labels
-        self.features = self.data.drop(columns=['label_service', 'ts'])
-        self.labels = self.data['label_service']
+        self.features = self.data.drop(columns=['label', 'ts'])
+        self.labels = self.data['label']
         self.label_encoder = LabelEncoder()
         self.labels_encoded = self.label_encoder.fit_transform(self.labels)
         
