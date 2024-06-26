@@ -20,7 +20,7 @@ class Net:
     def forward(self, X: np.ndarray) -> np.ndarray:
         return self.model.predict(X)
 
-def train(model: XGBoostModel, X_train: np.ndarray, y_train: np.ndarray, epochs: int, device: str = 'cpu'):
+def train(model: Net, X_train: np.ndarray, y_train: np.ndarray, epochs: int, device: str = 'cpu'):
     # XGBoost doesn't use GPU by default, so we ignore the device parameter
     # We'll use the number of epochs as n_estimators
     model.model.n_estimators = epochs
@@ -32,7 +32,7 @@ def train(model: XGBoostModel, X_train: np.ndarray, y_train: np.ndarray, epochs:
         verbose=True
     )
 
-def test(model: XGBoostModel, X_test: np.ndarray, y_test: np.ndarray, device: str = 'cpu') -> Tuple[float, float]:
+def test(model: Net, X_test: np.ndarray, y_test: np.ndarray, device: str = 'cpu') -> Tuple[float, float]:
     # Again, we ignore the device parameter for XGBoost
     y_pred = model.forward(X_test)
     mse = mean_squared_error(y_test, y_pred)
