@@ -7,6 +7,6 @@ num_classes: 6
 num_clients_per_round_fit: 10
 num_clients_per_round_eval: 25
 config_fit: 
-  lr: 0.1
-  momentum: 0.7
-  local_epochs: 20
+  lr: 0.01
+  momentum: 0.99
+  local_epochs: 10
