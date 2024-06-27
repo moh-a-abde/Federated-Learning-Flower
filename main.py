@@ -60,16 +60,8 @@ def plot_metrics(history, save_path):
 
     plt.figure(figsize=(12, 5))
 
-    # Plot loss
-    plt.subplot(1, 2, 1)
-    plt.plot(rounds, history.metrics_centralized["loss"], label='Loss')
-    plt.xlabel('Round')
-    plt.ylabel('Loss')
-    plt.title('Training Loss over Rounds')
-    plt.legend()
-
     # Plot accuracy
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 2, 1)
     plt.plot(rounds, history.metrics_centralized["accuracy"], label='Accuracy')
     plt.xlabel('Round')
     plt.ylabel('Accuracy')
