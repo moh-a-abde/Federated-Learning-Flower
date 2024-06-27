@@ -83,6 +83,6 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
         valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=2))
 
     # Creating test loader
-    testloader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=2)
+    testloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=2)
     
     return trainloaders, valloaders, testloader, dataset.input_dim
