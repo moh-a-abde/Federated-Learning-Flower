@@ -19,7 +19,7 @@ def main(cfg: DictConfig):
 
     # 2. Prepare your dataset
     trainloaders, validationloaders, testloader, input_dim = prepare_dataset(cfg.num_clients, 
-                                                                  cfg.batch_size)
+                                                                  cfg.batch_size, num_classes=cfg.num_classes)
     # Check trainloaders, validationloaders, testloader
     print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}, Input dim: {input_dim}'")
     # 3. Define your clients
