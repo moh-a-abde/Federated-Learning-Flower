@@ -50,6 +50,34 @@ def main(cfg: DictConfig):
     results_path = Path(save_path) / 'results.pkl'
 
     results = {'history': history}
+
+    # 7. Plot metrics
+    plot_metrics(history)
+
+def plot_metrics(history):
+    """Plot accuracy and loss from the history object."""
+    rounds = range(len(history.metrics_centralized["loss"]))
+
+    plt.figure(figsize=(12, 5))
+
+    # Plot loss
+    plt.subplot(1, 2, 1)
+    plt.plot(rounds, history.metrics_centralized["loss"], label='Loss')
+    plt.xlabel('Round')
+    plt.ylabel('Loss')
+    plt.title('Training Loss over Rounds')
+    plt.legend()
+
+    # Plot accuracy
+    plt.subplot(1, 2, 2)
+    plt.plot(rounds, history.metrics_centralized["accuracy"], label='Accuracy')
+    plt.xlabel('Round')
+    plt.ylabel('Accuracy')
+    plt.title('Training Accuracy over Rounds')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
     
 if __name__ == "__main__":
     main()
