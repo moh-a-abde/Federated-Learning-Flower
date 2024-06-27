@@ -51,10 +51,10 @@ def main(cfg: DictConfig):
 
     results = {'history': history}
 
-    # 7. Plot metrics
-    plot_metrics(history)
+    # 7. Plot metrics and save plot
+    plot_metrics(history, save_path)
 
-def plot_metrics(history):
+def plot_metrics(history, save_path):
     """Plot accuracy and loss from the history object."""
     rounds = range(len(history.metrics_centralized["loss"]))
 
@@ -77,6 +77,10 @@ def plot_metrics(history):
     plt.legend()
 
     plt.tight_layout()
+    
+    # Save plot
+    plot_path = Path(save_path) / 'metrics_plot.png'
+    plt.savefig(plot_path)
     plt.show()
     
 if __name__ == "__main__":
