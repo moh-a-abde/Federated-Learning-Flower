@@ -49,7 +49,7 @@ def get_csv_dataset(csv_file: str, transform=None):
     dataset = PreprocessedCSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, num_classes=cfg.num_classes, csv_file: str = 'data/zeek_live_data_labeled-2.csv'):
+def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, num_classes: int, csv_file: str = 'data/zeek_live_data_labeled-2.csv'):
     # Load and preprocess the dataset
     dataset = get_csv_dataset(csv_file)
     
