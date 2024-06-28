@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, classification_report, log_loss
 from sklearn.model_selection import train_test_split
 import time
+import copy
 
 class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
@@ -21,6 +22,13 @@ class Net:
         dtest = xgb.DMatrix(X)
         return self.model.predict(dtest)
         
+    def save_model(self, path: str) -> None:
+        self.model.save_model(path)
+        
+    def load_model(self, path: str) -> None:
+        self.model = xgb.Booster()
+        self.model.load_model(path)
+
 def train(net, trainloader, optimizer, epochs, device: str):
     X_train, y_train = [], []
     for features, labels in trainloader:
@@ -64,7 +72,10 @@ def train(net, trainloader, optimizer, epochs, device: str):
         if early_stopping(val_losses):
             print("Early stopping triggered")
             break
-            
+
+    # Save the model after training
+    net.save_model('model_state.json')
+    
 def test(net, testloader, device: str):
     X_test, y_test = [], []
     for features, labels in testloader:
