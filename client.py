@@ -5,7 +5,7 @@ import torch
 import flwr as fl
 import torch.optim as optim
 
-from model import Net, train, test
+from model import Net, train_nn, test_nn
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self,
@@ -49,7 +49,7 @@ class FlowerClient(fl.client.NumPyClient):
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
 
         # do local training
-        train(self.model, self.trainloader, optim, epochs, self.device)
+        train_nn(self.model, self.trainloader, optim, epochs, self.device)
 
         return self.get_parameters({}), len(self.trainloader), {}
     
