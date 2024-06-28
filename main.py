@@ -26,14 +26,23 @@ def main(cfg: DictConfig):
     client_fn = generate_client_fn(trainloaders, validationloaders, cfg.num_classes, input_dim)
     
     # 4. Define your strategy
+
+    # Define the evaluation metrics aggregation function
+    def evaluate_metrics_aggregation_fn(metrics):
+        # Example: Aggregate accuracy across all clients
+        accuracies = [m['accuracy'] for m in metrics]
+        aggregated_accuracy = sum(accuracies) / len(accuracies)
+        
+        return {'accuracy': aggregated_accuracy}
+    
     strategy = fl.server.strategy.FedAvg(fraction_fit=0.00001,
                                          min_fit_clients=cfg.num_clients_per_round_fit,
                                          fraction_evaluate=0.00001,
                                          min_evaluate_clients=cfg.num_clients_per_round_eval,
                                          min_available_clients=cfg.num_clients,
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
-                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim,
-                                          testloader))
+                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader),
+                                         evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn)
 
     # 5. Start simulation
     history = fl.simulation.start_simulation(
