@@ -4,7 +4,7 @@ from omegaconf import DictConfig
 
 import torch
 
-from model import Net, test
+from model import Net, test_nn
 
 def get_on_fit_config(config: DictConfig):
     def fit_config_fn(server_round: int):
@@ -27,7 +27,7 @@ def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
         state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
         model.load_state_dict(state_dict, strict=True)
 
-        loss, accuarcy = test(model, testloader, device)
+        loss, accuarcy = test_nn(model, testloader, device)
 
         return loss, {'accuarcy': accuarcy}
     return evaluate_fn
