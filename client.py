@@ -58,7 +58,7 @@ class FlowerClient(fl.client.NumPyClient):
         
         self.set_parameters(parameters)
 
-        loss, accuarcy = test(self.model, self.valloader, self.device)
+        loss, accuarcy = test_nn(self.model, self.valloader, self.device)
         
         return float(loss), len(self.valloader), {'accuarcy': accuarcy}
     
