@@ -30,7 +30,7 @@ def main(cfg: DictConfig):
     # Define the evaluation metrics aggregation function
     def evaluate_metrics_aggregation_fn(metrics):
         # Example: Aggregate accuracy across all clients
-        accuracies = [m['accuracy'] for m in metrics]
+        accuracies = [metric[1]['accuracy'] for metric in metrics]
         aggregated_accuracy = sum(accuracies) / len(accuracies)
         
         return {'accuracy': aggregated_accuracy}
