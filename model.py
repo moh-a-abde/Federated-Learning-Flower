@@ -1,83 +1,91 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+import xgboost as xgb
+import numpy as np
+from sklearn.metrics import accuracy_score, classification_report, log_loss
+from sklearn.model_selection import train_test_split
+import time
 
-class Net(nn.Module):
+class Net:
     def __init__(self, num_classes: int, input_dim: int) -> None:
-        super(Net, self).__init__()
-        # Increase the number of neurons in hidden layers and add another layer
-        self.fc1 = nn.Linear(input_dim, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(128, 64)
-        self.fc5 = nn.Linear(64, num_classes)
-        # Add dropout for regularization
-        self.dropout = nn.Dropout(0.5)
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = F.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc3(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc4(x))
-        x = self.fc5(x)
-        return x
+        self.num_classes = num_classes
+        self.model = None
 
+    def fit(self, X, y, num_boost_round: int, params: dict) -> None:
+        dtrain = xgb.DMatrix(X, label=y)
+        self.model = xgb.train(params, dtrain, num_boost_round=num_boost_round)
+
+    def predict(self, X) -> np.ndarray:
+        dtest = xgb.DMatrix(X)
+        return self.model.predict(dtest)
+
+    def predict_proba(self, X) -> np.ndarray:
+        dtest = xgb.DMatrix(X)
+        return self.model.predict(dtest)
+        
 def train(net, trainloader, optimizer, epochs, device: str):
-    criterion = torch.nn.CrossEntropyLoss()
-    net.train()
-    net.to(device)
+    X_train, y_train = [], []
+    for features, labels in trainloader:
+        X_train.append(features.numpy())
+        y_train.append(labels.numpy())
     
-    # Add learning rate scheduler
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.01, patience=2, verbose=True)
+    X_train = np.concatenate(X_train, axis=0)
+    y_train = np.concatenate(y_train, axis=0)
+    
+    train = xgb.DMatrix(X_train, label=y_train)
+    
+    param = {
+        'max_depth': 6,
+        'eta': 0.35,
+        'objective': 'multi:softmax',
+        'num_class': net.num_classes,
+        'eval_metric': 'merror',
+        'tree_method': 'hist'
+    }
+    
+    cv_params = {
+        'params': param,
+        'dtrain': train,
+        'num_boost_round': 20,
+        'nfold': 10,
+        'metrics': {'merror'},
+        'early_stopping_rounds': 10
+    }
 
+    cv_results = xgb.cv(**cv_params)
+    best_num_boost_round = cv_results.shape[0]
+
+    net.fit(X_train, y_train, num_boost_round=best_num_boost_round, params=param)
+    
     val_losses = []
     for epoch in range(epochs):
-        running_loss = 0.0
-        for features, labels in trainloader:
-            features, labels = features.to(device), labels.to(device)
-            
-            optimizer.zero_grad()
-            outputs = net(features)
-            loss = criterion(outputs, labels)
-            
-            loss.backward()
-            # Add gradient clipping
-            torch.nn.utils.clip_grad_norm_(net.parameters(), max_norm=1.0)
-            optimizer.step()
-            
-            running_loss += loss.item()
+        print(f"Epoch {epoch+1}/{epochs} completed")
+        val_loss = log_loss(y_train, net.predict_proba(X_train))
+        val_losses.append(val_loss)
         
-        # Print epoch loss and adjust learning rate
-        epoch_loss = running_loss / len(trainloader)
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
-        scheduler.step(epoch_loss)
-        val_losses.append(epoch_loss)
-        
-        # Check for early stopping
         if early_stopping(val_losses):
             print("Early stopping triggered")
             break
-
+            
 def test(net, testloader, device: str):
-    criterion = torch.nn.CrossEntropyLoss()
-    correct, total_loss = 0, 0.0
-    net.eval()
-    net.to(device)
-    with torch.no_grad():
-        for features, labels in testloader:
-            features, labels = features.to(device), labels.to(device)
-            outputs = net(features)
-            total_loss += criterion(outputs, labels).item()
-            _, predicted = torch.max(outputs.data, 1)
-            correct += (predicted == labels).sum().item()
+    X_test, y_test = [], []
+    for features, labels in testloader:
+        X_test.append(features.numpy())
+        y_test.append(labels.numpy())
     
-    accuracy = correct / len(testloader.dataset)
-    avg_loss = total_loss / len(testloader)
-    return avg_loss, accuracy
+    X_test = np.concatenate(X_test, axis=0)
+    y_test = np.concatenate(y_test, axis=0)
+    
+    predictions = net.predict(X_test)
+    
+    accuracy = accuracy_score(y_test, predictions)
+    report = classification_report(y_test, predictions)
+    avg_loss = log_loss(y_test, net.predict_proba(X_test))
 
+    print(f'Accuracy: {accuracy}')
+    print('Classification Report:')
+    print(report)
+    
+    return avg_loss, accuracy
+    
 def early_stopping(val_losses, patience=10):
     if len(val_losses) > patience:
         if all(val_losses[-1] > val_losses[-(i+2)] for i in range(patience)):
