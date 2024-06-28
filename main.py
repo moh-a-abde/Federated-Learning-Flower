@@ -10,6 +10,7 @@ from pprint import pprint
 from dataset import prepare_dataset
 from client import generate_client_fn
 from server import get_on_fit_config, get_evaluate_fn
+from model import train_xgboost
 
 @hydra.main(config_path="conf", config_name="base", version_base=None)
 def main(cfg: DictConfig):
@@ -58,7 +59,14 @@ def main(cfg: DictConfig):
     save_path = HydraConfig.get().runtime.output_dir
     results_path = Path(save_path) / 'results.pkl'
 
-    results = {'history': history}
+    # 7. Train XGBoost classifier
+    xgboost_model = train_xgboost()
+
+     results = {
+        'history': history,
+        'nn_results': nn_results,
+        'xgboost_model': xgboost_model  # Save the model or its relevant metrics
+    }
 
 if __name__ == "__main__":
     main()
