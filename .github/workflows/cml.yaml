@@ -38,6 +38,4 @@ jobs:
           pip install -r requirements.txt
           python main.py
 
-      - name: Upload metrics plot
-        run: |
-          cml-publish $(find . -name 'metrics_plot.png') --md --title "Metrics Plot"
+    
