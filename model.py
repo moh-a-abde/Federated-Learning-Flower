@@ -74,7 +74,7 @@ def early_stopping(val_losses, patience=10):
             return True
     return False
 
-def train_xgboost(X_scaled, y, tsz):
+def train_xgboost():
     
     # Load the dataset
     file_path = 'data/zeek_live_data_labeled-2.csv'
