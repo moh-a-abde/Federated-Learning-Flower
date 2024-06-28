@@ -11,13 +11,13 @@ def get_on_fit_config(config: DictConfig):
         return {
             'lr': config.lr,
             'momentum': config.momentum,
-            'local_epochs': config.local_epochs
+            'local_epochs': config.local_epochs,
+            'model_type': config.model_types[server_round % len(config.model_types)]  # Cycle through model types
         }
     return fit_config_fn
 
 def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
     def evaluate_fn(server_round: int, parameters, config):
-        # Determine model type
         model_type = config.get('model_type', 'nn')
         
         if model_type == 'nn':
@@ -30,7 +30,6 @@ def get_evaluate_fn(num_classes: int, input_dim: int, testloader):
             return loss, {'accuracy': accuracy}
         
         elif model_type == 'xgb':
-            # Load XGBoost model from parameters
             booster = xgb.Booster()
             booster.load_model(parameters)  # Assuming parameters contain model path or serialized model
             X, y = get_dataset(testloader)
