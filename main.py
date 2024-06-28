@@ -51,29 +51,5 @@ def main(cfg: DictConfig):
 
     results = {'history': history}
 
-    # 7. Plot metrics and save plot
-    plot_metrics(history, save_path)
-
-def plot_metrics(history, save_path):
-    """Plot accuracy and loss from the history object."""
-    rounds = range(len(history.metrics_centralized["loss"]))
-
-    plt.figure(figsize=(12, 5))
-
-    # Plot accuracy
-    plt.subplot(1, 2, 1)
-    plt.plot(rounds, history.metrics_centralized["accuracy"], label='Accuracy')
-    plt.xlabel('Round')
-    plt.ylabel('Accuracy')
-    plt.title('Training Accuracy over Rounds')
-    plt.legend()
-
-    plt.tight_layout()
-    
-    # Save plot
-    plot_path = Path(save_path) / 'metrics_plot.png'
-    plt.savefig(plot_path)
-    plt.show()
-    
 if __name__ == "__main__":
     main()
