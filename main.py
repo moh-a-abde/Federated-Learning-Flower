@@ -29,11 +29,11 @@ def main(cfg: DictConfig):
 
     # Define the evaluation metrics aggregation function
     def evaluate_metrics_aggregation_fn(metrics):
-        # Example: Aggregate accuracy across all clients
-        accuracies = [metric[1]['accuracy'] for metric in metrics]
-        aggregated_accuracy = sum(accuracies) / len(accuracies)
+        # Example: Aggregate accuarcy across all clients
+        accuarcies = [metric[1]['accuarcy'] for metric in metrics]
+        aggregated_accuarcy = sum(accuarcies) / len(accuarcies)
         
-        return {'accuracy': aggregated_accuracy}
+        return {'accuarcy': aggregated_accuarcy}
     
     strategy = fl.server.strategy.FedAvg(fraction_fit=0.00001,
                                          min_fit_clients=cfg.num_clients_per_round_fit,
