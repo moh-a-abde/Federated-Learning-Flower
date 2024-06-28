@@ -62,7 +62,7 @@ def main(cfg: DictConfig):
     # 7. Train XGBoost classifier
     xgboost_model = train_xgboost()
 
-     results = {
+    results = {
         'history': history,
         'nn_results': nn_results,
         'xgboost_model': xgboost_model  # Save the model or its relevant metrics
