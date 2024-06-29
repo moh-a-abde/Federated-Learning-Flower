@@ -91,7 +91,7 @@ def train_xgboost():
     y = data['label']
 
     # Convert categorical features to numerical
-    X = pd.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
+    X = data.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
 
     # Standardize the features
     scaler = StandardScaler()
