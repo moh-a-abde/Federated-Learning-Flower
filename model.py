@@ -81,6 +81,7 @@ def train_xgboost():
     # Load the dataset
     file_path = 'data/zeek_live_data_labeled-2.csv'
     data = pd.read_csv(file_path)
+
     # Encode categorical features
     label_encoder = LabelEncoder()
     data['label'] = label_encoder.fit_transform(data['label'])
@@ -93,7 +94,7 @@ def train_xgboost():
     y = data['label']
 
     # Convert categorical features to numerical
-    X = data.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
+    X = pd.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
 
     # Standardize the features
     scaler = StandardScaler()
