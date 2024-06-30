@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import xgboost as xgb
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import time
@@ -103,7 +103,7 @@ def train_xgboost():
     # Set the test size
     tsz = 0.20
 
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=tsz, shuffle=True, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=tsz, stratify=y, random_state=42)
     l = len(set(y))
     startTrainTime = time.time()
     train = xgb.DMatrix(X_train, label=y_train)
@@ -112,7 +112,7 @@ def train_xgboost():
         'max_depth': 6,
         'eta': 0.35,
         'objective': 'multi:softmax',
-        'num_class': l,
+        'num_class': 5,
         'eval_metric': 'merror',
         'tree_method': 'hist'
     }
