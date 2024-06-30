@@ -30,6 +30,7 @@ class Net(nn.Module):
         return x
 
 def train_nn(net, trainloader, optimizer, epochs, device: str):
+    print('Training Neural Network:')
     criterion = torch.nn.CrossEntropyLoss()
     net.train()
     net.to(device)
@@ -55,6 +56,7 @@ def train_nn(net, trainloader, optimizer, epochs, device: str):
             break
 
 def test_nn(net, testloader, device: str):
+    print('Testing Neural Network:')
     criterion = torch.nn.CrossEntropyLoss()
     correct, total_loss = 0, 0.0
     net.eval()
@@ -130,12 +132,13 @@ def train_xgboost():
     model = xgb.train(param, train, num_boost_round=best_num_boost_round)
     TrainTime = (time.time() - startTrainTime)
     startTestTime = time.time()
-    predictions = model.predict(test)
+    predictions = model.predict(train)
     TestTime = (time.time() - startTestTime)
     print(f"Training Time: {TrainTime} seconds")
     print(f"Testing Time: {TestTime} seconds")
-    accuracy = accuracy_score(y_test, predictions)
-    report = classification_report(y_test, predictions)
+    accuracy = accuracy_score(y_train, predictions)
+    report = classification_report(y_train, predictions)
+    print('XGBoost Model Training Metrics:')
     print(f'Accuracy: {accuracy}')
     print('Classification Report:')
     print(report)
