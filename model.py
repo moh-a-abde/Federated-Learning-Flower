@@ -112,7 +112,7 @@ def train_xgboost():
         'max_depth': 6,
         'eta': 0.35,
         'objective': 'multi:softmax',
-        'num_class': 4,
+        'num_class': l,
         'eval_metric': 'merror',
         'tree_method': 'hist'
     }
