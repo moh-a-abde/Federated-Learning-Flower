@@ -29,7 +29,7 @@ class Net(nn.Module):
         x = self.fc5(x)
         return x
 
-def train_nn(net, trainloader, optimizer, epochs, device: str):
+def train_nn(net, trainloader, testloader, optimizer, epochs, device: str):
     print('Training Neural Network:')
     criterion = torch.nn.CrossEntropyLoss()
     net.train()
