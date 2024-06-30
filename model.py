@@ -54,6 +54,10 @@ def train_nn(net, trainloader, optimizer, epochs, device: str):
         if early_stopping(val_losses):
             print("Early stopping triggered")
             break
+        # Evaluate on the test set
+        test_loss, test_accuracy = test_nn(net, testloader, device)
+        print(f"Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}")
+
 
 def test_nn(net, testloader, device: str):
     print('Testing Neural Network:')
@@ -106,7 +110,7 @@ def train_xgboost():
     X_scaled = scaler.fit_transform(X)
 
     # Set the test size
-    tsz = 0.20
+    tsz = 0.30
 
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=tsz, stratify=y, random_state=42)
     l = len(set(y))
