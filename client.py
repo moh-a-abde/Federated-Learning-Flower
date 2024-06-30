@@ -49,7 +49,7 @@ class FlowerClient(fl.client.NumPyClient):
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
 
         # do local training
-        train_nn(self.model, self.trainloader, optim, epochs, self.device)
+        train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
 
         return self.get_parameters({}), len(self.trainloader), {}
     
