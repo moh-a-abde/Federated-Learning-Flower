@@ -86,17 +86,20 @@ def train_xgboost():
 
     # Encode categorical features
     label_encoder = LabelEncoder()
+    # Print unique values in the 'label' column
+    unique_labels = data['label'].unique()
+    print("Unique values in 'label' column:", unique_labels)
     data['label'] = label_encoder.fit_transform(data['label'])
 
     # Separate the 'ts' column into a different dataset.
     ts_data = data[['ts']]
 
     # Select features and target
-    X = data.drop(columns=['label', 'ts'])
+    X = data.drop(columns=['label', 'ts', 'uid'])
     y = data['label']
 
     # Convert categorical features to numerical
-    X = pd.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
+    X = pd.get_dummies(X, columns=['id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
 
     # Standardize the features
     scaler = StandardScaler()
