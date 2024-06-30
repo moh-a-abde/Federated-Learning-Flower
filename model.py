@@ -79,7 +79,7 @@ def early_stopping(val_losses, patience=10):
 def train_xgboost():
     
     # Load the dataset
-    file_path = 'data/zeek_live_data_labeled-2.csv'
+    file_path = 'data/zeek_live_data_merged.csv'
     data = pd.read_csv(file_path)
 
     # Encode categorical features
