@@ -16,6 +16,7 @@ class FlowerClient(fl.client.NumPyClient):
 
         self.trainloader = trainloader
         self.valloader = valloader
+        self.testloader = testloader
 
         self.model = Net(num_classes, input_dim)
 
