@@ -11,7 +11,7 @@ class FlowerClient(fl.client.NumPyClient):
     def __init__(self,
                  trainloader,
                  valloader,
-                 tesloader,
+                 testloader,
                  num_classes, input_dim) -> None:
         super().__init__()
 
