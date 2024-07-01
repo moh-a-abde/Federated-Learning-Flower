@@ -33,7 +33,8 @@ class FlowerClient(fl.client.NumPyClient):
         if self.model_type == 'nn':
             return [val.cpu().numpy() for _, val in self.model.state_dict().items()]
         elif self.model_type == 'xgb':
-            return json.loads(self.model.save_config())
+            booster = self.model.get_booster()
+            return booster.save_raw().decode("utf-8")
 
     def fit(self, parameters: List[NDArrays], config: Dict[str, Scalar]):
         if self.model_type == 'nn':
