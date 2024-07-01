@@ -24,7 +24,7 @@ def main(cfg: DictConfig):
     # Check trainloaders, validationloaders, testloader
     print(f"Train loaders: {len(trainloaders)}, Validation loaders: {len(validationloaders)}, Test loader: {len(testloader)}, Input dim: {input_dim}'")
     # 3. Define your clients
-    client_fn = generate_client_fn(trainloaders, validationloaders, cfg.num_classes, input_dim)
+    client_fn = generate_client_fn(trainloaders, validationloaders, testloader, cfg.num_classes, input_dim)
     
     # 4. Define your strategy
 
