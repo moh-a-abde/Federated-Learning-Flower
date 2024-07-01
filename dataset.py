@@ -11,8 +11,9 @@ class PreprocessedCSVDataset(Dataset):
         self.data = pd.read_csv(csv_file)
         
         # Define categorical and numerical features
-        self.categorical_features = ['id.resp_p', 'id.resp_h', 'proto', 'query', 'uid']
-        self.numerical_features = ['id.orig_p']
+        self.categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
+        self.numerical_features = ['id.orig_p', 'orig_pkts',	'orig_ip_bytes',	'resp_pkts', 'missed_bytes'
+        , 'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
         
         # Define the column transformer
         self.preprocessor = ColumnTransformer(
@@ -23,8 +24,8 @@ class PreprocessedCSVDataset(Dataset):
         )
         
         # Separate features and labels
-        self.features = self.data.drop(columns=['label_service', 'ts'])
-        self.labels = self.data['label_service']
+        self.features = self.data.drop(columns=['label', 'ts'])
+        self.labels = self.data['label']
         self.label_encoder = LabelEncoder()
         self.labels_encoded = self.label_encoder.fit_transform(self.labels)
         
@@ -48,7 +49,7 @@ def get_csv_dataset(csv_file: str, transform=None):
     dataset = PreprocessedCSVDataset(csv_file, transform=transform)
     return dataset
 
-def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1, csv_file: str = 'data/live_data_part1.csv'):
+def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_ratio: float = 0.1, csv_file: str = 'data/zeek_live_data_merged.csv'):
     # Load and preprocess the dataset
     dataset = get_csv_dataset(csv_file)
     
@@ -82,6 +83,6 @@ def prepare_dataset(num_partitions: int, batch_size: int, val_ratio: float = 0.1
         valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=2))
 
     # Creating test loader
-    testloader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=2)
+    testloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=2)
     
     return trainloaders, valloaders, testloader, dataset.input_dim
