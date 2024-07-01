@@ -5,6 +5,7 @@ import torch
 import flwr as fl
 import torch.optim as optim
 import xgboost as xgb
+import json
 
 from model import Net, train_nn, test_nn, train_xgboost, test_xgboost
 
