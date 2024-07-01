@@ -39,7 +39,7 @@ def main(cfg: DictConfig):
                                          min_evaluate_clients=cfg.num_clients_per_round_eval,
                                          min_available_clients=cfg.num_clients,
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
-                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader),
+                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader, cfg.model_types),
                                          evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn)
 
     # 5. Start simulation
