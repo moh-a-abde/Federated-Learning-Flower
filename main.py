@@ -33,16 +33,14 @@ def main(cfg: DictConfig):
         aggregated_accuracy = sum(accuracies) / len(accuracies)
         return {'accuracy': aggregated_accuracy}
     
-    strategy = fl.server.strategy.FedAvg(
-        fraction_fit=cfg.fraction_fit,
-        min_fit_clients=cfg.min_fit_clients,
-        fraction_evaluate=cfg.fraction_evaluate,
-        min_evaluate_clients=cfg.min_evaluate_clients,
-        min_available_clients=cfg.num_clients,
-        on_fit_config_fn=get_on_fit_config(cfg.config_fit),
-        evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader, cfg.model_types),
-        evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn
-    )
+    strategy = fl.server.strategy.FedAvg(fraction_fit=0.00001,
+                                         min_fit_clients=cfg.num_clients_per_round_fit,
+                                         fraction_evaluate=0.00001,
+                                         min_evaluate_clients=cfg.num_clients_per_round_eval,
+                                         min_available_clients=cfg.num_clients,
+                                         on_fit_config_fn=get_on_fit_config(cfg.config_fit),
+                                         evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader),
+                                         evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn)
 
     # 5. Start simulation
     history = fl.simulation.start_simulation(
