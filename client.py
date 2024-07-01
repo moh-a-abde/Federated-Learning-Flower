@@ -29,7 +29,7 @@ class FlowerClient(fl.client.NumPyClient):
         if self.model_type == 'nn':
             return [val.cpu().numpy() for _, val in self.model.state_dict().items()]
         elif self.model_type == 'xgb':
-            return self.model.get_dump()
+            return json.loads(model.save_config())
 
     def fit(self, parameters: List[NDArrays], config: Dict[str, Scalar]):
         if self.model_type == 'nn':
@@ -42,7 +42,7 @@ class FlowerClient(fl.client.NumPyClient):
             return self.get_parameters({}), len(self.trainloader), {}
         elif self.model_type == 'xgb':
             self.model = train_xgboost()
-            return self.get_parameters({}), len(self.trainloader), {}
+            return self.get_parameters({}), {}
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
         if self.model_type == 'nn':
