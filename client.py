@@ -41,7 +41,7 @@ class FlowerClient(fl.client.NumPyClient):
             train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
             return self.get_parameters({}), len(self.trainloader), {}
         elif self.model_type == 'xgb':
-            self.model = train_xgboost(self.trainloader)
+            self.model = train_xgboost()
             return self.get_parameters({}), len(self.trainloader), {}
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
