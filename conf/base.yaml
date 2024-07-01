@@ -10,4 +10,4 @@ config_fit:
   lr: 0.01
   momentum: 0.99
   local_epochs: 10
-  model_types: ["nn", "xgb"]
+model_types: ["nn", "xgb"]
