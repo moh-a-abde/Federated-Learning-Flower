@@ -16,9 +16,12 @@ class FlowerClient(fl.client.NumPyClient):
         self.valloader = valloader
         self.testloader = testloader
         self.model_type = model_type
-        self.model = Net(num_classes, input_dim)
-
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+        if self.model_type == 'nn':
+            self.model = Net(num_classes, input_dim).to(self.device)
+        elif self.model_type == 'xgb':
+            self.model = xgb.XGBClassifier()
 
     def set_parameters(self, parameters: List[NDArrays]):
         if self.model_type == 'nn':
@@ -30,7 +33,7 @@ class FlowerClient(fl.client.NumPyClient):
         if self.model_type == 'nn':
             return [val.cpu().numpy() for _, val in self.model.state_dict().items()]
         elif self.model_type == 'xgb':
-            return json.loads(model.save_config())
+            return json.loads(self.model.save_config())
 
     def fit(self, parameters: List[NDArrays], config: Dict[str, Scalar]):
         if self.model_type == 'nn':
@@ -38,8 +41,8 @@ class FlowerClient(fl.client.NumPyClient):
             lr = config['lr']
             momentum = config['momentum']
             epochs = config['local_epochs']
-            optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
-            train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
+            optimizer = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
+            train_nn(self.model, self.trainloader, self.testloader, optimizer, epochs, self.device)
             return self.get_parameters({}), len(self.trainloader), {}
         elif self.model_type == 'xgb':
             self.model = train_xgboost()
