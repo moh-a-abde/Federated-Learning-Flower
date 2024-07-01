@@ -11,13 +11,13 @@ class FlowerClient(fl.client.NumPyClient):
     def __init__(self,
                  trainloader,
                  valloader,
-                 testloaderr,
+                 testloader,
                  num_classes, input_dim) -> None:
         super().__init__()
 
         self.trainloader = trainloader
         self.valloader = valloader
-        self.testloaderr = testloaderr
+        self.testloader = testloader
 
         self.model = Net(num_classes, input_dim)
 
@@ -51,7 +51,7 @@ class FlowerClient(fl.client.NumPyClient):
         optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
 
         # do local training
-        train_nn(self.model, self.trainloader, self.testloaderr, optim, epochs, self.device)
+        train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
 
         return self.get_parameters({}), len(self.trainloader), {}
     
@@ -72,7 +72,7 @@ def generate_client_fn(trainloaders, valloaders, testloader, num_classes, input_
 
         return FlowerClient(trainloader=trainloaders[int(cid)],
                             valloader=valloaders[int(cid)],
-                            testloaderr=testloader[int(cid)],
+                            testloader=testloader,
                             num_classes=num_classes,
                             input_dim=input_dim)
 
