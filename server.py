@@ -1,4 +1,3 @@
-# server.py
 import flwr as fl
 import numpy as np
 from typing import List, Tuple
