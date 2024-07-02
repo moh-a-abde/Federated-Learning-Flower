@@ -1,142 +1,78 @@
-import pandas as pd
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import xgboost as xgb
-from sklearn.model_selection import train_test_split, StratifiedKFold
-from sklearn.metrics import accuracy_score, classification_report
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-import time
+# model.py
+from keras import layers, models, optimizers
+from keras import backend as K
+from keras.utils import to_categorical
+import numpy as np
 
-class Net(nn.Module):
-    def __init__(self, num_classes: int, input_dim: int) -> None:
-        super(Net, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(128, 64)
-        self.fc5 = nn.Linear(64, num_classes)
-        self.dropout = nn.Dropout(0.5)
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = F.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc3(x))
-        x = self.dropout(x)
-        x = F.relu(self.fc4(x))
-        x = self.fc5(x)
-        return x
+def PrimaryCap(inputs, dim_capsule, n_channels, kernel_size, strides, padding):
+    output = layers.Conv2D(filters=dim_capsule * n_channels, kernel_size=kernel_size, strides=strides, padding=padding,
+                           name='primarycap_conv2d')(inputs)
+    outputs = layers.Reshape(target_shape=[-1, dim_capsule], name='primarycap_reshape')(output)
+    return layers.Lambda(squash, name='primarycap_squash')(outputs)
 
-def train_nn(net, trainloader, optimizer, epochs, device: str):
-    criterion = torch.nn.CrossEntropyLoss()
-    net.train()
-    net.to(device)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.01, patience=2, verbose=True)
-    val_losses = []
-    for epoch in range(epochs):
-        running_loss = 0.0
-        for features, labels in trainloader:
-            features, labels = features.to(device), labels.to(device)
-            optimizer.zero_grad()
-            outputs = net(features)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(net.parameters(), max_norm=1.0)
-            optimizer.step()
-            running_loss += loss.item()
-        epoch_loss = running_loss / len(trainloader)
-        print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
-        scheduler.step(epoch_loss)
-        val_losses.append(epoch_loss)
-        if early_stopping(val_losses):
-            print("Early stopping triggered")
-            break
+def CapsuleLayer(num_capsule, dim_capsule, routings, name):
+    def layer(input):
+        input_expand = K.expand_dims(input, 2)
+        input_tiled = K.tile(input_expand, [1, 1, num_capsule, 1])
+        input_tiled = K.reshape(input_tiled, [-1, input.shape[1], num_capsule, input.shape[2]])
+        b = K.zeros(shape=[K.shape(input)[0], input.shape[1], num_capsule, 1])
+        for i in range(routings):
+            c = K.softmax(b, axis=2)
+            outputs = K.batch_dot(c, input_tiled, [2, 1])
+            if i < routings - 1:
+                b += K.batch_dot(outputs, input_tiled, [2, 3])
+        return K.squeeze(outputs, axis=1)
+    return layer
 
-def test_nn(net, testloader, device: str):
-    criterion = torch.nn.CrossEntropyLoss()
-    correct, total_loss = 0, 0.0
-    net.eval()
-    net.to(device)
-    with torch.no_grad():
-        for features, labels in testloader:
-            features, labels = features.to(device), labels.to(device)
-            outputs = net(features)
-            total_loss += criterion(outputs, labels).item()
-            _, predicted = torch.max(outputs.data, 1)
-            correct += (predicted == labels).sum().item()
-    accuracy = correct / len(testloader.dataset)
-    avg_loss = total_loss / len(testloader)
-    return avg_loss, accuracy
+def Length(name):
+    return layers.Lambda(lambda x: K.sqrt(K.sum(K.square(x), axis=-1)), name=name)
 
-def early_stopping(val_losses, patience=10):
-    if len(val_losses) > patience:
-        if all(val_losses[-1] > val_losses[-(i+2)] for i in range(patience)):
-            return True
-    return False
+def Mask():
+    return layers.Lambda(lambda x: x[0] * K.expand_dims(x[1], -1))
 
-def train_xgboost():
-    
-    # Load the dataset
-    file_path = 'data/zeek_live_data_labeled-2.csv'
-    data = pd.read_csv(file_path)
+def squash(vectors, axis=-1):
+    s_squared_norm = K.sum(K.square(vectors), axis, keepdims=True)
+    scale = s_squared_norm / (1 + s_squared_norm) / K.sqrt(s_squared_norm + K.epsilon())
+    return scale * vectors
 
-    # Encode categorical features
-    label_encoder = LabelEncoder()
-    data['label'] = label_encoder.fit_transform(data['label'])
+def margin_loss(y_true, y_pred):
+    L = y_true * K.square(K.maximum(0., 0.9 - y_pred)) + \
+        0.5 * (1 - y_true) * K.square(K.maximum(0., y_pred - 0.1))
+    return K.mean(K.sum(L, 1))
 
-    # Separate the 'ts' column into a different dataset.
-    ts_data = data[['ts']]
+def CapsNet(input_shape, n_class, routings):
+    x = layers.Input(shape=input_shape)
+    conv1 = layers.Conv2D(filters=256, kernel_size=9, strides=1, padding='valid', activation='relu', name='conv1')(x)
+    primarycaps = PrimaryCap(conv1, dim_capsule=8, n_channels=32, kernel_size=9, strides=2, padding='valid')
+    digitcaps = CapsuleLayer(num_capsule=n_class, dim_capsule=16, routings=routings, name='digitcaps')(primarycaps)
+    out_caps = Length(name='out_caps')(digitcaps)
+    y = layers.Input(shape=(n_class,))
+    masked_by_y = Mask()([digitcaps, y])
+    masked = Mask()(digitcaps)
+    decoder = models.Sequential(name='decoder')
+    decoder.add(layers.Dense(512, activation='relu', input_dim=16*n_class))
+    decoder.add(layers.Dense(1024, activation='relu'))
+    decoder.add(layers.Dense(np.prod(input_shape), activation='sigmoid'))
+    decoder.add(layers.Reshape(target_shape=input_shape, name='out_recon'))
+    train_model = models.Model([x, y], [out_caps, decoder(masked_by_y)])
+    eval_model = models.Model(x, [out_caps, decoder(masked)])
+    noise = layers.Input(shape=(n_class, 16))
+    noised_digitcaps = layers.Add()([digitcaps, noise])
+    masked_noised_y = Mask()([noised_digitcaps, y])
+    manipulate_model = models.Model([x, y, noise], decoder(masked_noised_y))
+    return train_model, eval_model, manipulate_model
 
-    # Select features and target
-    X = data.drop(columns=['label', 'ts'])
-    y = data['label']
-
-    # Convert categorical features to numerical
-    X = pd.get_dummies(X, columns=['uid', 'id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
-
-    # Standardize the features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-
-    # Set the test size
-    tsz = 0.20
-
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=tsz, stratify=y, random_state=42)
-    l = len(set(y))
-    startTrainTime = time.time()
-    train = xgb.DMatrix(X_train, label=y_train)
-    test = xgb.DMatrix(X_test, label=y_test)
-    param = {
-        'max_depth': 6,
-        'eta': 0.35,
-        'objective': 'multi:softmax',
-        'num_class': l,
-        'eval_metric': 'merror',
-        'tree_method': 'hist'
-    }
-    cv_params = {
-        'params': param,
-        'dtrain': train,
-        'num_boost_round': 20,
-        'nfold': 10,
-        'metrics': {'merror'},
-        'early_stopping_rounds': 10
-    }
-    cv_results = xgb.cv(**cv_params)
-    print(cv_results)
-    best_num_boost_round = cv_results.shape[0]
-    model = xgb.train(param, train, num_boost_round=best_num_boost_round)
-    TrainTime = (time.time() - startTrainTime)
-    startTestTime = time.time()
-    predictions = model.predict(test)
-    TestTime = (time.time() - startTestTime)
-    print(f"Training Time: {TrainTime} seconds")
-    print(f"Testing Time: {TestTime} seconds")
-    accuracy = accuracy_score(y_test, predictions)
-    report = classification_report(y_test, predictions)
-    print(f'Accuracy: {accuracy}')
-    print('Classification Report:')
-    print(report)
+def get_model():
+    model, _, _ = CapsNet(input_shape=(28, 28, 1), n_class=10, routings=3)
+    model.compile(optimizer=optimizers.Adam(lr=0.001),
+                  loss=[margin_loss, 'mse'],
+                  loss_weights=[1., 0.392],
+                  metrics={'out_caps': 'accuracy'})
     return model
+
+def train_model(model, train_data, train_labels):
+    model.fit([train_data, train_labels], [train_labels, train_data],
+              batch_size=100, epochs=50, validation_split=0.2)
+
+def evaluate_model(model, test_data, test_labels):
+    return model.evaluate([test_data, test_labels], [test_labels, test_data])
