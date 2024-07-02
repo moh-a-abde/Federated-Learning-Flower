@@ -79,4 +79,15 @@ def CapsNet(input_shape, n_class, routings):
 
 def get_model():
     model, _, _ = CapsNet(input_shape=(28, 28, 1), n_class=10, routings=3)
-    model.compile(optim
+    model.compile(optimizer=optimizers.Adam(lr=0.001),
+                  loss=[margin_loss, 'mse'],
+                  loss_weights=[1., 0.392],
+                  metrics={'out_caps': 'accuracy'})
+    return model
+
+def train_model(model, train_data, train_labels):
+    model.fit([train_data, train_labels], [train_labels, train_data],
+              batch_size=100, epochs=50, validation_split=0.2)
+
+def evaluate_model(model, test_data, test_labels):
+    return model.evaluate([test_data, test_labels], [test_labels, test_data])
