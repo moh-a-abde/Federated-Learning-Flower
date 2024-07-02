@@ -87,7 +87,7 @@ def train_xgboost():
     data_directory = 'data'
 
     # Get a list of all files in the directory starting with 'zeek-'
-    files = [f for f in os.listdir(data_directory) if f.startswith('zeek-') and os.path.isfile(os.path.join(data_directory, f))]
+    files = [f for f in os.listdir(data_directory) if f.startswith('zeek_') and os.path.isfile(os.path.join(data_directory, f))]
 
     if not files:
         print("No new files found.")
