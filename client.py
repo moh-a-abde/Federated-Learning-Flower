@@ -1,77 +1,26 @@
-from collections import OrderedDict
-from typing import Dict
-from flwr.common import NDArrays, Scalar
-import torch
+# client.py
 import flwr as fl
-import torch.optim as optim
+from model import get_model, train_model, evaluate_model
+from dataset import load_data
 
-from model import Net, train_nn, test_nn
+class FederatedClient(fl.client.NumPyClient):
+    def __init__(self):
+        self.model = get_model()
+        self.train_data, self.train_labels, self.test_data, self.test_labels = load_data()
 
-class FlowerClient(fl.client.NumPyClient):
-    def __init__(self,
-                 trainloader,
-                 valloader,
-                 num_classes, input_dim) -> None:
-        super().__init__()
+    def get_parameters(self):
+        return self.model.get_weights()
 
-        self.trainloader = trainloader
-        self.valloader = valloader
-
-        self.model = Net(num_classes, input_dim)
-
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-    def set_parameters(self, parameters):
-
-        params_dict = zip(self.model.state_dict().keys(), parameters)
-
-        state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
-
-        self.model.load_state_dict(state_dict, strict=True)
-    
-    
-    def get_parameters(self, config: Dict[str, Scalar]):
-        
-        return [ val.cpu().numpy() for _, val in self.model.state_dict().items()]
-
-    
     def fit(self, parameters, config):
+        self.model.set_weights(parameters)
+        train_model(self.model, self.train_data, self.train_labels)
+        return self.model.get_weights(), len(self.train_data), {}
 
-        # copy parameters sent by the server into client's local model
-        self.set_parameters(parameters)
+    def evaluate(self, parameters, config):
+        self.model.set_weights(parameters)
+        loss, accuracy = evaluate_model(self.model, self.test_data, self.test_labels)
+        return loss, len(self.test_data), {"accuracy": accuracy}
 
-        lr = config['lr']
-        momentum = config['momentum']
-        epochs = config['local_epochs']
-        # Define the optimizer (e.g., Adam)
-        
-        optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
-
-        # do local training
-        train_nn(self.model, self.trainloader, optim, epochs, self.device)
-
-        return self.get_parameters({}), len(self.trainloader), {}
-    
-    
-    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
-        
-        self.set_parameters(parameters)
-
-        loss, accuarcy = test_nn(self.model, self.valloader, self.device)
-        
-        return float(loss), len(self.valloader), {'accuarcy': accuarcy}
-    
-
-
-def generate_client_fn(trainloaders, valloaders, num_classes, input_dim):
-
-    def client_fn(cid: str):
-
-        return FlowerClient(trainloader=trainloaders[int(cid)],
-                            valloader=valloaders[int(cid)],
-                            num_classes=num_classes,
-                            input_dim=input_dim)
-
-
-    return client_fn
+if __name__ == "__main__":
+    client = FederatedClient()
+    fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
