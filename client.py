@@ -1,4 +1,3 @@
-# client.py
 import flwr as fl
 import numpy as np
 import logging
