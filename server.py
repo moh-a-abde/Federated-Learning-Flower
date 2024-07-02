@@ -5,7 +5,6 @@ from typing import List, Tuple
 
 def get_evaluate_fn():
     def evaluate(weights: List[np.ndarray]) -> Tuple[float, float]:
-        # Load your test data and evaluate the model here
         from model import get_model, evaluate_model
         from dataset import load_data
         _, _, test_data, test_labels = load_data()
