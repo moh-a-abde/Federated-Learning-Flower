@@ -6,7 +6,8 @@ def start_server():
     return server_process
 
 def start_client():
-    client_process = subprocess.Popen(['python', 'client
+    client_process = subprocess.Popen(['python', 'client.py'])
+    return client_process
 
 if __name__ == "__main__":
     # Start the server
@@ -17,7 +18,7 @@ if __name__ == "__main__":
     time.sleep(5)
 
     # Start the clients
-    num_clients = 3  # Adjust the number of clients as needed
+    num_clients = 10  # Adjust the number of clients as needed
     client_processes = []
     for i in range(num_clients):
         print(f"Starting client {i+1}...")
