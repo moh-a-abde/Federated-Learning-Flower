@@ -6,8 +6,7 @@ def start_server():
     return server_process
 
 def start_client():
-    client_process = subprocess.Popen(['python', 'client.py'])
-    return client_process
+    client_process = subprocess.Popen(['python', 'client
 
 if __name__ == "__main__":
     # Start the server
