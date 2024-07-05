@@ -43,7 +43,7 @@ def main():
     model_instance = model.train_xgboost()
 
     # Start Flower client
-    fl.client.start_numpy_client(server_address="localhost:8080", client=FlowerClient(model_instance))
+    fl.client.start_client(server_address="localhost:8080", client=FlowerClient(model_instance).to_client())
 
 if __name__ == "__main__":
     main()
