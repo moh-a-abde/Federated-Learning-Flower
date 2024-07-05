@@ -1,17 +1,19 @@
-import multiprocessing
-import server
-import client
+import flwr as fl
+from client import generate_client_fn
+
+def main():
+    # Placeholder trainloader, valloader, testloader setup
+    trainloaders = [None] * 10
+    valloaders = [None] * 10
+    testloader = None
+
+    client_fn = generate_client_fn(trainloaders, valloaders, testloader)
+
+    fl.simulation.start_simulation(
+        client_fn=client_fn,
+        num_clients=10,
+        config=fl.server.ServerConfig(num_rounds=10),
+    )
 
 if __name__ == "__main__":
-    # Start server process
-    server_process = multiprocessing.Process(target=server.start_server)
-    server_process.start()
-
-    # Start client processes
-    clients = [multiprocessing.Process(target=client.main) for _ in range(5)]
-    for c in clients:
-        c.start()
-
-    server_process.join()
-    for c in clients:
-        c.join()
+    main()
