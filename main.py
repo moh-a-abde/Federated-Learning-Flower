@@ -7,9 +7,11 @@ if __name__ == "__main__":
     server_process = multiprocessing.Process(target=server.start_server)
     server_process.start()
 
-    # Start client process
-    client_process = multiprocessing.Process(target=client.main)
-    client_process.start()
+    # Start client processes
+    clients = [multiprocessing.Process(target=client.main) for _ in range(5)]
+    for c in clients:
+        c.start()
 
     server_process.join()
-    client_process.join()
+    for c in clients:
+        c.join()
