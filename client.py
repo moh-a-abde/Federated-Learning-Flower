@@ -13,12 +13,6 @@ class FlowerClient(fl.client.NumPyClient):
         self.testloader = testloader
         self.model = None
 
-    def set_parameters(self, parameters: NDArrays) -> None:
-        pass
-
-    def get_parameters(self, config: Dict[str, Scalar]) -> NDArrays:
-        return []
-
     def fit(self, parameters: NDArrays, config: Dict[str, Scalar]) -> Tuple[NDArrays, int, Dict[str, Scalar]]:
         self.model = model.train_xgboost()
         return [], len(self.trainloader), {}
