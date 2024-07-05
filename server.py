@@ -14,7 +14,7 @@ def get_evaluate_fn():
         return 0.0, {'accuracy': accuracy}
     return evaluate_fn
 
-if __name__ == "__main__":
+def start_server():
     strategy = fl.server.strategy.FedAvg(
         fraction_fit=0.1,
         fraction_eval=0.1,
@@ -25,3 +25,6 @@ if __name__ == "__main__":
         on_fit_config_fn=get_on_fit_config(),
     )
     fl.server.start_server(config={"num_rounds": 10}, strategy=strategy)
+
+if __name__ == "__main__":
+    start_server()
