@@ -27,8 +27,8 @@ jobs:
 
     - name: Run server
       run: |
-        python scripts/server.py &
+        python server.py &
         sleep 5
 
     - name: Run client
-      run: python scripts/client.py
+      run: python client.py
