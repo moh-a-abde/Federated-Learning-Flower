@@ -1,80 +1,49 @@
-from collections import OrderedDict
-from typing import Dict
-from flwr.common import NDArrays, Scalar
-import torch
 import flwr as fl
-import torch.optim as optim
-
-from model import Net, train_nn, test_nn
+import pandas as pd
+import model
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self,
-                 trainloader,
-                 valloader,
-                 testloader,
-                 num_classes, input_dim) -> None:
-        super().__init__()
+    def __init__(self, model):
+        self.model = model
 
-        self.trainloader = trainloader
-        self.valloader = valloader
-        self.testloader = testloader
+    def get_parameters(self):
+        # Return model parameters as a list of NumPy ndarrays
+        return self.model.get_params()
 
-        self.model = Net(num_classes, input_dim)
-
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-    def set_parameters(self, parameters):
-
-        params_dict = zip(self.model.state_dict().keys(), parameters)
-
-        state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
-
-        self.model.load_state_dict(state_dict, strict=True)
-    
-    
-    def get_parameters(self, config: Dict[str, Scalar]):
-        
-        return [ val.cpu().numpy() for _, val in self.model.state_dict().items()]
-
-    
     def fit(self, parameters, config):
+        # Set model parameters
+        self.model.set_params(parameters)
 
-        # copy parameters sent by the server into client's local model
-        self.set_parameters(parameters)
+        # Load the dataset
+        file_path = 'data/zeek_live_data_merged.csv'
+        data = pd.read_csv(file_path)
 
-        lr = config['lr']
-        momentum = config['momentum']
-        epochs = config['local_epochs']
-        # Define the optimizer (e.g., Adam)
-        
-        optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
+        # Train the model
+        self.model = model.train_xgboost()
 
-        # do local training
-        train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
+        # Return updated model parameters and number of training examples
+        return self.model.get_params(), len(data), {}
 
-        return self.get_parameters({}), len(self.trainloader), {}
-    
-    
-    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
-        
-        self.set_parameters(parameters)
+    def evaluate(self, parameters, config):
+        # Set model parameters
+        self.model.set_params(parameters)
 
-        loss, accuarcy = test_nn(self.model, self.valloader, self.device)
-        
-        return float(loss), len(self.valloader), {'accuarcy': accuarcy}
-    
+        # Load the dataset
+        file_path = 'data/zeek_live_data_merged.csv'
+        data = pd.read_csv(file_path)
 
+        # Evaluate the model
+        accuracy = model.evaluate_xgboost(self.model, data)
 
-def generate_client_fn(trainloaders, valloaders, testloader, num_classes, input_dim):
+        # Return loss, accuracy, and number of evaluation examples
+        return 0.0, accuracy, len(data)
 
-    def client_fn(cid: str):
+def main():
+    # Load the model
+    model_instance = model.train_xgboost()
 
-        return FlowerClient(trainloader=trainloaders[int(cid)],
-                            valloader=valloaders[int(cid)],
-                            testloader=testloader,
-                            num_classes=num_classes,
-                            input_dim=input_dim)
+    # Start Flower client
+    fl.client.start_numpy_client(server_address="localhost:8080", client=FlowerClient(model_instance))
 
-
-    return client_fn
+if __name__ == "__main__":
+    main()
