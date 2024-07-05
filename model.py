@@ -17,7 +17,7 @@ def train_xgboost():
     print("Unique values in 'label' column:", unique_labels)
     data['label'] = label_encoder.fit_transform(data['label'])
 
-    # Separate the 'ts' column into a different dataset.
+    # Separate the 'ts' column into a different dataset
     ts_data = data[['ts']]
 
     # Select features and target
@@ -66,7 +66,7 @@ def train_xgboost():
     print(f"Training Time: {TrainTime} seconds")
     print(f"Testing Time: {TestTime} seconds")
     accuracy = accuracy_score(y_train, predictions)
-    report = classification_report(y_train, predictions, zero_division=1)
+    report = classification_report(y_train, predictions)
     print('XGBoost Model Training Metrics:')
     print(f'Accuracy: {accuracy}')
     print('Classification Report:')
