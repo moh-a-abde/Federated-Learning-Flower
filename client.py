@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from typing import Dict, List
 from flwr.common import NDArrays, Scalar
+from typing import Tuple
 import pandas as pd
 import flwr as fl
 import numpy as np
