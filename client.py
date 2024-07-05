@@ -33,15 +33,3 @@ def generate_client_fn(trainloaders, valloaders, testloader):
                             valloader=valloaders[int(cid)],
                             testloader=testloader)
     return client_fn
-
-def main():
-    # Placeholder trainloader, valloader, testloader setup
-    trainloaders = [None] * 5
-    valloaders = [None] * 5
-    testloader = None
-
-    client_fn = generate_client_fn(trainloaders, valloaders, testloader)
-    fl.client.start_numpy_client(server_address="localhost:8080", client=client_fn("0"))
-
-if __name__ == "__main__":
-    main()
