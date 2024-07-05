@@ -1,42 +1,34 @@
-name: federated-learning-flower
-on: [push]
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    # optionally use a convenient Ubuntu LTS + DVC + CML image
-    #container: ghcr.io/iterative/cml:0-dvc2-base1
-    steps:
-      - uses: actions/checkout@v3
-      # may need to setup NodeJS & Python3 on e.g. self-hosted
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.7'
-      - uses: iterative/setup-cml@v1
-      
-      - name: Set up Python environment
-        run: |
-          python -m pip install --upgrade pip
-          pip debug --verbose
-          pip install virtualenv
-          virtualenv venv
-          source venv/bin/activate
-          pip install mamba
-          mamba init
-          source ~/.bashrc
-          mamba create
-          mamba activate
-          pip install xgboost
-          pip install scikit-learn
-          pip install -U flwr["simulation"]
-          pip install -U "ray[all]"
-          pip install torch
-          pip install torchvision
-          pip install torchaudio
-          pip install hydra-core
-          pip install -r requirements.txt
-          python main.py
+name: Federated Learning with CML
 
-    
+on: [push]
+
+jobs:
+  run-cml:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas scikit-learn xgboost
+        pip install -U flwr["simulation"]
+        pip install -U "ray[all]"
+        pip install torch
+        pip install torchvision
+        pip install torchaudio
+        pip install hydra-core
+
+    - name: Run server
+      run: |
+        python scripts/server.py &
+        sleep 5
+
+    - name: Run client
+      run: python scripts/client.py
