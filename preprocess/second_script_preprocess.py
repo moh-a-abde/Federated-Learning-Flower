@@ -51,7 +51,7 @@ data.columns
 
 data.info()
 
-y.unique()
+#y.unique()
 
 data.fillna(method='ffill', inplace=True)
 
