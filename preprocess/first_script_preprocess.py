@@ -24,7 +24,7 @@ def read_json_file(file_path):
         return None
 
 # Dataset
-file_path = "zeek_live_export_7012024b.json" # Path to be changed
+file_path = "data/raw/zeek_live_export_7012024a.json" # Path to be changed
 df = read_json_file(file_path)
 
 if df is not None:
@@ -76,7 +76,7 @@ def summary(dfLocal):
 df = clean(df)
 summary(df)
 
-output_file_path = 'zeek_live_data_7012024b.csv'
+output_file_path = 'data/raw/zeek_live_export_7012024a.csv'
 df.to_csv(output_file_path, index=False)
 print(f"CSV file saved successfully to {output_file_path}")
 
