@@ -5,8 +5,7 @@ from dataset import prepare_dataset
 def main():
     # Prepare dataset
     num_partitions = 10
-    batch_size = 32
-    num_classes = 2  # Adjust based on your dataset
+    num_classes = 5  
     val_ratio = 0.1
     csv_file = 'data/zeek_live_data_merged.csv'
     
