@@ -11,7 +11,7 @@ def load_config(config_file):
 
 def main():
     # Load configuration
-    config = load_config('base.yaml')
+    config = load_config('conf/base.yaml')
 
     # Extract parameters from configuration
     num_partitions = config['num_clients']
