@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 import pandas as pd
 import numpy as np
+from typing import List
 
 class PreprocessedCSVDataset(Dataset):
     def __init__(self, csv_file, transform=None):
