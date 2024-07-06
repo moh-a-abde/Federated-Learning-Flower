@@ -5,11 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 import time
 
-def train_xgboost():
-    # Load the dataset
-    file_path = 'data/zeek_live_data_merged.csv'
-    data = pd.read_csv(file_path)
-
+def train_xgboost(data):
     # Encode categorical features
     label_encoder = LabelEncoder()
     # Print unique values in the 'label' column
