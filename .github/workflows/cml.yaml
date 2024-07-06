@@ -17,7 +17,6 @@ jobs:
       - name: Set up Python environment
         run: |
           python -m pip install --upgrade pip
-          pip debug --verbose
           pip install virtualenv
           virtualenv venv
           source venv/bin/activate
@@ -37,7 +36,15 @@ jobs:
           pip install torchaudio
           pip install hydra-core
           pip install -r requirements.txt
+
+      - name: Run Preprocessing Scripts
+        run: |
+          source venv/bin/activate
           python preprocess/first_script_preprocess.py
           python preprocess/label_dataset.py
           python preprocess/second_script_preprocess.py
+
+      - name: Run Training
+        run: |
+          source venv/bin/activate
           python main.py
