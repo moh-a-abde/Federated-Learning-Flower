@@ -3,6 +3,7 @@ from client import generate_client_fn
 from dataset import prepare_dataset
 import pandas as pd
 import yaml
+from typing import List
 
 def load_config(config_file):
     with open(config_file, 'r') as file:
