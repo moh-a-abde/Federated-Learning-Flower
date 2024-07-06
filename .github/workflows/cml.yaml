@@ -26,6 +26,7 @@ jobs:
           source ~/.bashrc
           mamba create
           mamba activate
+          pip install pyyaml
           pip install importlib-metadata==6.0
           pip install xgboost
           pip install scikit-learn
