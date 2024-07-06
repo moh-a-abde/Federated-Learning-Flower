@@ -17,18 +17,6 @@ def train_xgboost(trainloader: DataLoader):
     X = np.concatenate([x[0] for x in data_list])
     y = np.concatenate([x[1] for x in data_list])
 
-    #label_encoder = LabelEncoder()
-
-    # Select features and target
-    #X = data.drop(columns=['label', 'ts', 'uid'])
-
-    # Convert categorical features to numerical
-    #X = pd.get_dummies(X, columns=['id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
-
-    # Standardize the features
-    #scaler = StandardScaler()
-    #X_scaled = scaler.fit_transform(X)
-
     # Set the test size
     tsz = 0.30
 
