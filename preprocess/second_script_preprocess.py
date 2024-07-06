@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Step 1: Read the CSV file into a DataFrame
-df = pd.read_csv('zeek_live_data_labeled.csv')
+df = pd.read_csv('data/raw/zeek_live_export_7012024a_labeled.csv')
 
 df.head()
 
@@ -78,32 +78,7 @@ preprocessor = ColumnTransformer(
     ])
 
 # Save the updated DataFrame to a new CSV file
-output_file_path = 'zeek_live_data_final.csv'  # Adjust the path as necessary
+output_file_path = 'data/raw/zeek_live_export_7012024a_final.csv'  # Adjust the path as necessary
 data.to_csv(output_file_path, index=False)
 
 print(f"CSV file saved successfully to {output_file_path}")
-
-# Define the model
-model = Pipeline(steps=[
-    ('preprocessor', preprocessor),
-    ('classifier', RandomForestClassifier())
-])
-
-# Split the data into training and testing sets
-X = data.drop(columns=['label', 'ts'])
-y = data['label']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-X.head()
-
-
-
-# Train the model
-model.fit(X_train, y_train)
-
-# Make predictions
-y_pred = model.predict(X_test).astype(str)
-
-# Evaluate the model
-print(classification_report(y_test, y_pred))
-
