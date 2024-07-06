@@ -6,6 +6,7 @@ import pandas as pd
 def main():
     # Prepare dataset
     num_partitions = 10
+    batch_size = 64
     num_classes = 5  
     val_ratio = 0.1
     csv_file = 'data/zeek_live_data_merged.csv'
