@@ -1,6 +1,7 @@
 import flwr as fl
 from client import generate_client_fn
 from dataset import prepare_dataset
+import pandas as pd
 
 def main():
     # Prepare dataset
@@ -10,8 +11,11 @@ def main():
     csv_file = 'data/zeek_live_data_merged.csv'
     
     trainloaders, valloaders, testloader, input_dim = prepare_dataset(num_partitions, batch_size, num_classes, val_ratio, csv_file)
+    
+    # Load the full dataset to pass to the XGBoost function
+    dataset = pd.read_csv(csv_file)
 
-    client_fn = generate_client_fn(trainloaders, valloaders, testloader)
+    client_fn = generate_client_fn(trainloaders, valloaders, testloader, dataset)
 
     fl.simulation.start_simulation(
         client_fn=client_fn,
