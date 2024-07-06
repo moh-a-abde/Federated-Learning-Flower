@@ -22,11 +22,11 @@ def main():
     if len(csv_files) != num_partitions:
         raise ValueError(f"Number of CSV files ({len(csv_files)}) does not match number of clients ({num_partitions})")
 
-    trainloaders, valloaders, testloader, datasets = prepare_dataset(
+    trainloaders, valloaders, testloader = prepare_dataset(
         num_partitions, batch_size, num_classes, val_ratio, csv_files
     )
 
-    client_fn = generate_client_fn(trainloaders, valloaders, testloader, datasets)
+    client_fn = generate_client_fn(trainloaders, valloaders, testloader)
 
     fl.simulation.start_simulation(
         client_fn=client_fn,
