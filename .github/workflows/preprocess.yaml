@@ -18,5 +18,6 @@ jobs:
         run: |
         
           python preprocess/first_script_preprocess.py
-          python preprocess/second_script_preprocess.py
           python preprocess/label_dataset.py
+          python preprocess/second_script_preprocess.py
+          
