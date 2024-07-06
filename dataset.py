@@ -9,7 +9,17 @@ from typing import List
 class PreprocessedCSVDataset(Dataset):
     def __init__(self, csv_file, transform=None):
         self.data = pd.read_csv(csv_file)
-        
+
+        # Select features and target
+        #X = data.drop(columns=['label', 'ts', 'uid'])
+
+        # Convert categorical features to numerical
+        #X = pd.get_dummies(X, columns=['id.orig_h', 'id.resp_h', 'proto', 'conn_state', 'history'])
+
+        # Standardize the features
+        #scaler = StandardScaler()
+        #X_scaled = scaler.fit_transform(X)
+
         self.categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
         self.numerical_features = ['id.orig_p', 'orig_pkts', 'orig_ip_bytes', 'resp_pkts', 'missed_bytes',
                                    'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
@@ -56,12 +66,11 @@ def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_
         num_total = len(dataset)
         num_val = int(val_ratio * num_total)
         num_train = num_total - num_val
+    
         
         for_train, for_val = random_split(dataset, [num_train, num_val], torch.Generator().manual_seed(2024))
         
         trainloaders.append(DataLoader(for_train, batch_size=batch_size, shuffle=True, num_workers=2))
         valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=2))
     
-    testloader = DataLoader(datasets[0], batch_size=64, shuffle=False, num_workers=2)  # Use one of the datasets for the test loader
-
-    return trainloaders, valloaders, testloader
+    return trainloaders, valloaders, datasets
