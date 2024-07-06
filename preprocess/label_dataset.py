@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the CSV file
-file_path = 'zeek_live_data_7012024b.csv'  # Adjust the path as necessary
+file_path = 'data/raw/zeek_live_export_7012024a.csv'  # Adjust the path as necessary
 data = pd.read_csv(file_path)
 
 # Define the port-label mapping
@@ -24,7 +24,7 @@ def get_label(port):
 data['label'] = data['id.resp_p'].apply(lambda x: get_label(int(x)) if not pd.isna(x) else None)
 
 # Save the updated DataFrame to a new CSV file
-output_file_path = 'zeek_live_data_labeled.csv'  # Adjust the path as necessary
+output_file_path = 'data/raw/zeek_live_export_7012024a_labeled.csv'  # Adjust the path as necessary
 data.to_csv(output_file_path, index=False)
 
 print(f"Labeled data saved to {output_file_path}")
