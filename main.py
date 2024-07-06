@@ -9,7 +9,7 @@ def main():
     batch_size = 64
     num_classes = 5  
     val_ratio = 0.1
-    csv_file = 'data/zeek_live_data_merged.csv'
+    csv_file = 'data/raw/zeek_live_export_7012024a_final.csv'
     
     trainloaders, valloaders, testloader, input_dim = prepare_dataset(num_partitions, batch_size, num_classes, val_ratio, csv_file)
     
