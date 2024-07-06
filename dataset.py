@@ -27,6 +27,8 @@ class PreprocessedCSVDataset(Dataset):
         self.labels_encoded = self.label_encoder.fit_transform(self.labels)
         
         self.features_transformed = self.preprocessor.fit_transform(self.features)
+        if not isinstance(self.features_transformed, np.ndarray):
+            self.features_transformed = self.features_transformed.toarray()
         self.input_dim = self.features_transformed.shape[1]
         self.transform = transform
 
@@ -34,8 +36,7 @@ class PreprocessedCSVDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        features = self.features_transformed[idx].astype('float32').todense()
-        features = np.asarray(features).flatten()
+        features = self.features_transformed[idx].astype('float32')
         label = self.labels_encoded[idx]
         if self.transform:
             features = self.transform(features)
@@ -63,4 +64,4 @@ def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_
     
     testloader = DataLoader(datasets[0], batch_size=64, shuffle=False, num_workers=2)  # Use one of the datasets for the test loader
 
-    return trainloaders, valloaders, testloader, datasets
+    return trainloaders, valloaders, testloader
