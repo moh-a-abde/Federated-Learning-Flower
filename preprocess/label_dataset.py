@@ -1,9 +1,5 @@
 import pandas as pd
 
-# Load the CSV file
-file_path = 'data/raw/zeek_live_export_7012024a.csv'  # Adjust the path as necessary
-data = pd.read_csv(file_path)
-
 # Define the port-label mapping
 port_label_mapping = {
     53: 'DNS',
@@ -13,22 +9,23 @@ port_label_mapping = {
     21: 'FTP'
 }
 
-# Create a new 'label' column and initialize with None
-data['label'] = None
+def label_data(file_path):
+    data = pd.read_csv(file_path)
+    data['label'] = data['id.resp_p'].apply(lambda x: port_label_mapping.get(int(x), None) if not pd.isna(x) else None)
+    output_file_path = file_path.replace(".csv", "_labeled.csv")
+    data.to_csv(output_file_path, index=False)
+    print(f"Labeled data saved to {output_file_path}")
+    print(data.head())
 
-# Function to map port to label
-def get_label(port):
-    return port_label_mapping.get(port, None)
+# List of CSV files to process
+csv_files = [
+    "data/raw/zeek_live_export_7052024.csv",
+    "data/raw/zeek_live_export_7032024.csv",
+    "data/raw/zeek_live_export_7022024.csv",
+    "data/raw/zeek_live_export_7012024b.csv",
+    "data/raw/zeek_live_export_7012024a.csv"
+]
 
-# Apply the mapping to the 'id.resp_p' column
-data['label'] = data['id.resp_p'].apply(lambda x: get_label(int(x)) if not pd.isna(x) else None)
-
-# Save the updated DataFrame to a new CSV file
-output_file_path = 'data/raw/zeek_live_export_7012024a_labeled.csv'  # Adjust the path as necessary
-data.to_csv(output_file_path, index=False)
-
-print(f"Labeled data saved to {output_file_path}")
-
-# Print the first few rows of the labeled data
-print(data.head())
-
+# Loop through each CSV file and label it
+for file_path in csv_files:
+    label_data(file_path)
