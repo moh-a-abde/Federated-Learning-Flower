@@ -24,8 +24,8 @@ jobs:
           #docker rmi $(docker image ls -aq)
           #df -h
           
-          sudo rm -rf /tmp/*
-          sudo rm -rf ~/.cache/pip
+          #sudo rm -rf /tmp/*
+          #sudo rm -rf ~/.cache/pip
           
           # setup env
           python -m pip install --upgrade pip
@@ -49,6 +49,12 @@ jobs:
           pip install hydra-core
           pip install -r requirements.txt
 
+      # Cleanup step to free up disk space
+      - name: Cleanup disk space
+        run: |
+          sudo rm -rf /tmp/*
+          sudo rm -rf ~/.cache/pip
+      
       - name: Run Preprocessing Scripts
         run: |
           source venv/bin/activate
