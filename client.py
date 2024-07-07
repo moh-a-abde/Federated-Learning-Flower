@@ -3,6 +3,7 @@ from flwr.common import NDArrays, Scalar
 import flwr as fl
 import model
 from torch.utils.data import DataLoader
+import ray
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, trainloader: DataLoader, valloader: DataLoader, testloader: DataLoader):
