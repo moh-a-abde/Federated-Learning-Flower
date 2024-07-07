@@ -18,12 +18,15 @@ jobs:
         run: |
 
           # free disk space
-          sudo swapoff -a
-          sudo rm -f /swapfile
-          sudo apt clean
-          docker rmi $(docker image ls -aq)
-          df -h
-
+          #sudo swapoff -a
+          #sudo rm -f /swapfile
+          #sudo apt clean
+          #docker rmi $(docker image ls -aq)
+          #df -h
+          
+          sudo rm -rf /tmp/*
+          sudo rm -rf ~/.cache/pip
+          
           # setup env
           python -m pip install --upgrade pip
           pip install virtualenv
@@ -49,9 +52,9 @@ jobs:
       - name: Run Preprocessing Scripts
         run: |
           source venv/bin/activate
-          python preprocess/first_script_preprocess.py
-          python preprocess/label_dataset.py
-          python preprocess/second_script_preprocess.py
+          python preprocess/first_script_preprocess.py --log-level WARNING
+          python preprocess/label_dataset.py --log-level WARNING
+          python preprocess/second_script_preprocess.py --log-level WARNING
 
       - name: Run Training
         run: |
