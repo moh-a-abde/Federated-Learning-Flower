@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Any
 from flwr.common import NDArrays, Scalar
 import flwr as fl
 import model
@@ -11,13 +11,21 @@ class FlowerClient(fl.client.NumPyClient):
         self.testloader = testloader
         self.model = None
 
-    def fit(self, parameters: NDArrays, config: Dict[str, Scalar]) -> Tuple[NDArrays, int, Dict[str, Scalar]]:
+    def fit(self, parameters: NDArrays, config: Dict[str, Scalar]) -> Dict[str, Any]:
         self.model = model.train_xgboost(self.trainloader)
-        return [], len(self.trainloader.dataset), {}
+        return {
+            "parameters": [],
+            "num_examples": len(self.trainloader.dataset),
+            "metrics": {}
+        }
 
-    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]) -> Tuple[float, int, Dict[str, Scalar]]:
+    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]) -> Dict[str, Any]:
         accuracy = 0.99  # Placeholder for actual accuracy
-        return 0.0, len(self.valloader.dataset), {'accuracy': accuracy}
+        return {
+            "loss": 0.0,
+            "num_examples": len(self.valloader.dataset),
+            "metrics": {'accuracy': accuracy}
+        }
 
 def generate_client_fn(trainloaders: List[DataLoader], valloaders: List[DataLoader], testloader: DataLoader):
     def client_fn(cid: str):
