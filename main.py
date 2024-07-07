@@ -3,6 +3,7 @@ from client import generate_client_fn
 from dataset import prepare_dataset
 import pandas as pd
 import yaml
+import ray
 
 def load_config(config_file):
     with open(config_file, 'r') as file:
@@ -27,6 +28,8 @@ def main():
     )
 
     client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
+
+    ray.init()
 
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
