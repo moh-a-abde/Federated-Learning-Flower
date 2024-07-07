@@ -28,11 +28,24 @@ def main():
 
     client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
 
-    fl.simulation.start_simulation(
+    # Define your strategy
+    strategy = fl.server.strategy.FedAvg(
+        fraction_fit=0.5,
+        min_fit_clients=cfg.num_clients_per_round_fit,
+        fraction_evaluate=0.5,
+        min_evaluate_clients=cfg.num_clients_per_round_eval,
+        min_available_clients=cfg.num_clients,
+        on_fit_config_fn=get_on_fit_config(cfg.config_fit),
+        evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, valloaders)
+)
+
+
+    history = fl.simulation.start_simulation(
         client_fn=client_fn,
-        num_clients=num_partitions,
+        num_clients=cfg.num_clients,
         config=fl.server.ServerConfig(num_rounds=num_rounds),
-        client_resources={'num_cpus': 2},
+        strategy=strategy,
+        client_resources={'num_cpus': 4},
     )
 
 if __name__ == "__main__":
