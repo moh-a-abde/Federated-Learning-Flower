@@ -1,13 +1,11 @@
 import pandas as pd
 import xgboost as xgb
 import numpy as np
-from torch.utils.data import Dataset, DataLoader, random_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
 def train_xgboost(trainloader: DataLoader):
-
     # Combine data from DataLoader into a DataFrame
     data_list = []
     for features, labels in trainloader:
@@ -50,10 +48,14 @@ def train_xgboost(trainloader: DataLoader):
     model = xgb.train(param, train, num_boost_round=best_num_boost_round)
 
     predictions = model.predict(test)
-    accuracy = accuracy_score(test, predictions)
-    report = classification_report(test, predictions)
+    predictions = predictions.astype(int)  # Ensure predictions are integer type
+
+    accuracy = accuracy_score(y_test, predictions)
+    report = classification_report(y_test, predictions)
+    
     print('XGBoost Model Training Metrics:')
-    print('Accuracy: {accuracy}')
+    print(f'Accuracy: {accuracy}')
     print('Classification Report:')
     print(report)
+    
     return model
