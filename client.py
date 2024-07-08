@@ -8,7 +8,10 @@ import ray
 from model import train_xgboost
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self, trainloader: DataLoader, valloader: DataLoader, testloader: DataLoader):
+    def __init__(self, trainloader, valloader, testloader) -> None:
+        
+        super().__init__()
+        
         self.trainloader = trainloader
         self.valloader = valloader
         self.testloader = testloader
