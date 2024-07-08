@@ -9,20 +9,25 @@ from model import train_xgboost
 
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, trainloader, valloader, testloader) -> None:
-        
         super().__init__()
-        
         self.trainloader = trainloader
         self.valloader = valloader
         self.testloader = testloader
-        self.model = None
+        # Initialize the model
+        self.model = train_xgboost(trainloader)
 
     def set_parameters(self, parameters):
-        param_dict = {k: v for k, v in zip(self.model.feature_names, parameters)}
-        self.model.set_attr(**param_dict)
+        if self.model is not None:
+            param_dict = {k: v for k, v in zip(self.model.feature_names, parameters)}
+            self.model.set_attr(**param_dict)
+        else:
+            raise ValueError("Model is not initialized")
 
     def get_parameters(self, config: Dict[str, Scalar]):
-        return [self.model.attr(name) for name in self.model.feature_names]
+        if self.model is not None:
+            return [self.model.attr(name) for name in self.model.feature_names]
+        else:
+            raise ValueError("Model is not initialized")
 
     def fit(self, parameters, config):
         # copy parameters sent by the server into client's local model
