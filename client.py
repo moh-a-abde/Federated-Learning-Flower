@@ -24,7 +24,7 @@ class FlowerClient(fl.client.NumPyClient):
         else:
             raise ValueError("Model is not initialized")
     #, config: Dict[str, Scalar]
-    def get_parameters(self):
+    def get_parameters(self, config):
         if self.model is None or self.model.feature_names is None:
             return []  # or some default value
     
