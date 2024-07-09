@@ -23,13 +23,13 @@ class FlowerClient(fl.client.NumPyClient):
             self.model.set_attr(**param_dict)
         else:
             raise ValueError("Model is not initialized")
-
-    def get_parameters(self, config: Dict[str, Scalar]):
-        if self.model is not None:
-            return [self.model.attr(name) for name in self.model.feature_names]
-        else:
-            raise ValueError("Model is not initialized")
-
+    #, config: Dict[str, Scalar]
+    def get_parameters(self):
+        if self.model is None or self.model.feature_names is None:
+            return []  # or some default value
+    
+        return [self.model.attr(name) for name in self.model.feature_names]
+    
     def fit(self, parameters, config):
         # copy parameters sent by the server into client's local model
         self.set_parameters(parameters)
