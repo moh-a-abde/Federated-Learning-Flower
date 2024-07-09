@@ -57,5 +57,7 @@ def train_xgboost(trainloader: DataLoader):
     print(f'Accuracy: {accuracy}')
     print('Classification Report:')
     print(report)
+
+    model.feature_names = list(X_train.columns)  # Ensure feature names are set correctly
     
     return model
