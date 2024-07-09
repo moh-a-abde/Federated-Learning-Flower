@@ -15,6 +15,7 @@ class FlowerClient(fl.client.NumPyClient):
         self.testloader = testloader
         # Initialize the model
         self.model = train_xgboost(trainloader)
+        print(f"Model initialized: {self.model}")
 
     def set_parameters(self, parameters):
         if self.model is not None:
