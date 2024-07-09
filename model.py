@@ -17,14 +17,17 @@ def train_xgboost(trainloader: DataLoader):
     y = np.concatenate([x[1] for x in data_list])
 
     # Set the test size
-    tsz = 0.30
+    #tsz = 0.30
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tsz, stratify=y, random_state=42)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tsz, stratify=y, random_state=42)
     
     l = len(set(y))
     
-    train = xgb.DMatrix(X_train, label=y_train)
-    test = xgb.DMatrix(X_test, label=y_test)
+    #train = xgb.DMatrix(X_train, label=y_train)
+    #test = xgb.DMatrix(X_test, label=y_test)
+
+    # Create DMatrix using the entire dataset
+    dtrain = xgb.DMatrix(X, label=y)
     
     param = {
         'max_depth': 6,
@@ -45,13 +48,13 @@ def train_xgboost(trainloader: DataLoader):
     cv_results = xgb.cv(**cv_params)
     print(cv_results)
     best_num_boost_round = cv_results.shape[0]
-    model = xgb.train(param, train, num_boost_round=best_num_boost_round)
+    model = xgb.train(param, dtrain, num_boost_round=best_num_boost_round)
 
-    predictions = model.predict(test)
+    predictions = model.predict(dtrain)
     predictions = predictions.astype(int)  # Ensure predictions are integer type
 
-    accuracy = accuracy_score(y_test, predictions)
-    report = classification_report(y_test, predictions)
+    accuracy = accuracy_score(y, predictions)
+    report = classification_report(y, predictions)
     
     print('XGBoost Model Training Metrics:')
     print(f'Accuracy: {accuracy}')
