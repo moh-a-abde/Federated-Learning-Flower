@@ -39,7 +39,7 @@ def train_xgboost(trainloader: DataLoader):
     }
     cv_params = {
         'params': param,
-        'dtrain': train,
+        'dtrain': dtrain,
         'num_boost_round': 20,
         'nfold': 10,
         'metrics': {'merror'},
