@@ -59,13 +59,13 @@ def main():
 
     client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
 
-    ray.init(num_cpus=4, memory=10 * 1024 * 1024 * 1024)  # Ensure this matches the available resources
+    ray.init(num_cpus=4)  # Ensure this matches the available resources
 
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
         num_clients=num_partitions,
         config=fl.server.ServerConfig(num_rounds=num_rounds),
-        resources_per_client={"num_cpus": 1, "memory": 2 * 1024 * 1024 * 1024}  # Allocate 1 CPU and 2 GB memory per client
+        resources_per_client={"num_cpus": 1}  # Allocate 1 CPU and 2 GB memory per client
     )
 
 if __name__ == "__main__":
