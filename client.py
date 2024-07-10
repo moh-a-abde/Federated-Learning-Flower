@@ -17,35 +17,17 @@ class FlowerClient(fl.client.NumPyClient):
         self.model = train_xgboost(trainloader)
         print(f"Model initialized: {self.model}")
 
-    def set_parameters(self, parameters):
-        if self.model is not None:
-            param_dict = {k: v for k, v in zip(self.model.feature_names, parameters)}
-            self.model.set_attr(**param_dict)
-        else:
-            raise ValueError("Model is not initialized")
-    #, config: Dict[str, Scalar]
-    def get_parameters(self, config):
-        if self.model is None or self.model.feature_names is None:
-            return []  # or some default value
-    
-        return [self.model.attr(name) for name in self.model.feature_names]
-    
     def fit(self, parameters, config):
-        # copy parameters sent by the server into client's local model
-        self.set_parameters(parameters)
-
-        self.model = model.train_xgboost(self.trainloader)
         # do local training
-        train_xgboost(self.trainloader)
+        self.model = model.train_xgboost(self.trainloader)
         return {
-            "parameters": [],
+            "parameters": [],  # Placeholder for actual parameters
             "num_examples": len(self.trainloader.dataset),
             "metrics": {}
         }
 
     def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
         accuracy = 0.99  # Placeholder for actual accuracy
-        self.set_parameters(parameters)
         return {
             "loss": 0.0,
             "num_examples": len(self.valloader.dataset),
