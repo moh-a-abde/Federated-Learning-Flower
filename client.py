@@ -13,15 +13,13 @@ class FlowerClient(fl.client.NumPyClient):
         self.trainloader = trainloader
         self.valloader = valloader
         self.testloader = testloader
-        # Initialize the model
-        self.model = train_xgboost(trainloader)
+        self.model = train_xgboost(trainloader)  # Initialize the model
         print(f"Model initialized: {self.model}")
 
     def fit(self, parameters, config):
-        # do local training
-        self.model = model.train_xgboost(self.trainloader)
+        self.model = train_xgboost(self.trainloader)
         return {
-            "parameters": [],  # Placeholder for actual parameters
+            "parameters": [],
             "num_examples": len(self.trainloader.dataset),
             "metrics": {}
         }
