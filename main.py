@@ -29,12 +29,12 @@ def main():
 
     client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
 
-    ray.init(num_cpus=2)
+    ray.init(num_cpus=1)
 
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
         num_clients=num_partitions,
-        config=fl.server.ServerConfig(num_rounds=num_rounds),
+        config=fl.server.ServerConfig(num_rounds=5),
         client_resources={'num_cpus': 1},
     )
 
