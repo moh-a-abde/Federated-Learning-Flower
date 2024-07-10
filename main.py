@@ -31,9 +31,9 @@ def main():
 
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
-        num_clients=num_partitions,
+        num_clients=2,
         config=fl.server.ServerConfig(num_rounds=5),
-        resources_per_client={"num_cpus": 2, "memory": 5 * 1024 * 1024 * 1024},
+        client_resources={"num_cpus": 2, "memory": 5 * 1024 * 1024 * 1024},
     )
 
 if __name__ == "__main__":
