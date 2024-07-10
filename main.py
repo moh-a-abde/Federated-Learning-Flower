@@ -65,7 +65,6 @@ def main():
         client_fn=client_fn,
         num_clients=num_partitions,
         config=fl.server.ServerConfig(num_rounds=num_rounds),
-        resources_per_client={"num_cpus": 1}  # Allocate 1 CPU and 2 GB memory per client
     )
 
 if __name__ == "__main__":
