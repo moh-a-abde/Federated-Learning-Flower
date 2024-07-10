@@ -60,7 +60,7 @@ def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_
         
         for_train, for_val = random_split(dataset, [num_train, num_val], torch.Generator().manual_seed(2024))
         
-        trainloaders.append(DataLoader(for_train, batch_size=batch_size, shuffle=True, num_workers=2))
-        valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=2))
+        trainloaders.append(DataLoader(for_train, batch_size=batch_size, shuffle=True, num_workers=1, pin_memory=True, persistent_workers=True))
+        valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=1, pin_memory=True, persistent_workers=True))
     
     return trainloaders, valloaders, datasets
