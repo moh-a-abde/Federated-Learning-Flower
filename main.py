@@ -1,40 +1,44 @@
+from collections import OrderedDict
+from typing import Dict, List, Any
+from flwr.common import NDArrays, Scalar
 import flwr as fl
-from client import generate_client_fn
-from dataset import prepare_dataset
-import pandas as pd
-import yaml
+import model
+from torch.utils.data import DataLoader
 import ray
+from model import train_xgboost
 
-def load_config(config_file):
-    with open(config_file, 'r') as file:
-        config = yaml.safe_load(file)
-    return config
+class FlowerClient(fl.client.NumPyClient):
+    def __init__(self, trainloader, valloader, testloader) -> None:
+        super().__init__()
+        self.trainloader = trainloader
+        self.valloader = valloader
+        self.testloader = testloader
+        self.model = train_xgboost(trainloader)  # Initialize the model
+        print(f"Model initialized: {self.model}")
 
-def main():
-    config = load_config('conf/base.yaml')
+    def fit(self, parameters, config):
+        self.model = train_xgboost(self.trainloader)
+        return {
+            "parameters": [],
+            "num_examples": len(self.trainloader.dataset),
+            "metrics": {}
+        }
 
-    num_partitions = config['num_clients']
-    batch_size = config['batch_size']
-    num_classes = config['num_classes']
-    val_ratio = config.get('val_ratio', 0.1)
-    csv_files = [config['data'][f'file_path_{i}'] for i in range(1, 6)]
-    num_rounds = config['num_rounds']
+    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
+        accuracy = 0.99  # Placeholder for actual accuracy
+        return {
+            "loss": 0.0,
+            "num_examples": len(self.valloader.dataset),
+            "metrics": {'accuracy': accuracy}
+        }
 
-    if len(csv_files) != num_partitions:
-        raise ValueError(f"Number of CSV files ({len(csv_files)}) does not match number of clients ({num_partitions})")
-
-    trainloaders, valloaders, datasets = prepare_dataset(
-        num_partitions, batch_size, num_classes, val_ratio, csv_files
-    )
-
-    client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
-
-    history = fl.simulation.start_simulation(
-        client_fn=client_fn,
-        num_clients=2,
-        config=fl.server.ServerConfig(num_rounds=5),
-        client_resources={"num_cpus": 2, "memory": 5 * 1024 * 1024 * 1024},
-    )
-
-if __name__ == "__main__":
-    main()
+def generate_client_fn(trainloaders, valloaders, testloader):
+    def client_fn(cid: str):
+        cid_int = int(cid)
+        print(f"Creating client {cid_int}")
+        if cid_int >= len(trainloaders):
+            raise ValueError(f"Client ID {cid_int} is out of bounds for trainloaders of length {len(trainloaders)}")
+        return FlowerClient(trainloader=trainloaders[cid_int],
+                            valloader=valloaders[cid_int],
+                            testloader=testloader)
+    return client_fn
