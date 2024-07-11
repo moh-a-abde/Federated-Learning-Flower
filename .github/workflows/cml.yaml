@@ -52,6 +52,7 @@ jobs:
       # Cleanup step to free up disk space
       - name: Cleanup disk space
         run: |
+          source venv/bin/activate
           sudo rm -rf /tmp/*
           sudo rm -rf ~/.cache/pip
       
