@@ -44,8 +44,10 @@ def main(cfg: DictConfig):
                                          on_fit_config_fn=get_on_fit_config(cfg.config_fit),
                                          evaluate_fn=get_evaluate_fn(cfg.num_classes, input_dim, testloader),
                                          evaluate_metrics_aggregation_fn=evaluate_metrics_aggregation_fn)
-
-    # 5. Start simulation
+    # 5. Train XGBoost classifier
+    xgboost_model = train_xgboost()
+    
+    # 6. Start simulation
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
         num_clients=cfg.num_clients,
@@ -55,12 +57,10 @@ def main(cfg: DictConfig):
 
     )
 
-    # 6. Save results
+    # 7. Save results
     save_path = HydraConfig.get().runtime.output_dir
     results_path = Path(save_path) / 'results.pkl'
 
-    # 7. Train XGBoost classifier
-    xgboost_model = train_xgboost()
 
     #results = {
     #    'history': history,
