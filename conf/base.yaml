@@ -1,6 +1,6 @@
 ---
 
-num_rounds: 10
+num_rounds: 2
 num_clients: 10
 batch_size: 64
 num_classes: 5
