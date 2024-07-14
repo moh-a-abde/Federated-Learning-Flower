@@ -27,7 +27,7 @@ def main():
         num_partitions, batch_size, num_classes, val_ratio, csv_files
     )
 
-    client_fn = generate_client_fn(trainloaders, valloaders, datasets[0])
+    client_fn = generate_client_fn(trainloaders, valloaders)
 
     history = fl.simulation.start_simulation(
         client_fn=client_fn,
