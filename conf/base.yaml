@@ -14,7 +14,7 @@ config_fit:
 data:
   file_path_1: 'data/raw/zeek_live_export_7032024_final.csv'
   file_path_2: 'data/raw/zeek_live_export_7022024_final.csv'
-  file_path_3: 'ata/raw/zeek_live_export_7022024_final.csv
+  file_path_3: 'data/raw/zeek_live_export_7022024_final.csv'
   file_path_4: 'data/raw/zeek_live_export_7012024a_final.csv'
   file_path_5: 'data/raw/zeek_live_export_7012024b_final.csv'
 
