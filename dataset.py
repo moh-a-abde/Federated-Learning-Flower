@@ -43,8 +43,7 @@ class PreprocessedCSVDataset(Dataset):
         return torch.tensor(features), torch.tensor(label, dtype=torch.long)
 
 def get_csv_dataset(csv_file: str, transform=None):
-    dataset = PreprocessedCSVDataset(csv_file, transform=transform)
-    return dataset
+    return PreprocessedCSVDataset(csv_file, transform=transform)
 
 def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_ratio: float = 0.1, csv_files: List[str] = []):
     trainloaders, valloaders, datasets = [], [], []
