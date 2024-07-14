@@ -8,11 +8,10 @@ import ray
 from model import train_xgboost
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self, trainloader, valloader, testloader) -> None:
+    def __init__(self, trainloader, valloader) -> None:
         super().__init__()
         self.trainloader = trainloader
         self.valloader = valloader
-        self.testloader = testloader
         # Initialize the model
         self.model = train_xgboost(trainloader)
         print(f"Model initialized: {self.model}")
@@ -34,13 +33,12 @@ class FlowerClient(fl.client.NumPyClient):
             "metrics": {'accuracy': accuracy}
         }
 
-def generate_client_fn(trainloaders, valloaders, testloader):
+def generate_client_fn(trainloaders, valloaders):
     def client_fn(cid: str):
         cid_int = int(cid)
         print(f"Creating client {cid_int}")
         if cid_int >= len(trainloaders):
             raise ValueError(f"Client ID {cid_int} is out of bounds for trainloaders of length {len(trainloaders)}")
         return FlowerClient(trainloader=trainloaders[cid_int],
-                            valloader=valloaders[cid_int],
-                            testloader=testloader)
+                            valloader=valloaders[cid_int])
     return client_fn
