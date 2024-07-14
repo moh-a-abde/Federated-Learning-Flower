@@ -4,8 +4,8 @@ import numpy as np
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, classification_report
 
-def train_xgboost(trainloader: DataLoader):
-    data_list = [(features.numpy(), labels.numpy()) for features, labels in trainloader]
+def train_xgboost(trainloaders: DataLoader):
+    data_list = [(features.numpy(), labels.numpy()) for features, labels in trainloaders]
 
     X = np.concatenate([x[0] for x in data_list])
     y = np.concatenate([x[1] for x in data_list])
