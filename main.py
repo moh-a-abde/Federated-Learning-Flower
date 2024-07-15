@@ -23,7 +23,7 @@ def main():
     if len(csv_files) != num_partitions:
         raise ValueError(f"Number of CSV files ({len(csv_files)}) does not match number of clients ({num_partitions})")
 
-    trainloaders, valloaders = prepare_dataset(
+    trainloaders, valloaders, datasets = prepare_dataset(
         num_partitions, batch_size, num_classes, val_ratio, csv_files
     )
 
