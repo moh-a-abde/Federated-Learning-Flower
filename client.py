@@ -1,80 +1,84 @@
-from collections import OrderedDict
-from typing import Dict
-from flwr.common import NDArrays, Scalar
-import torch
+import warnings
+from logging import INFO
+
 import flwr as fl
-import torch.optim as optim
+from flwr.common.logger import log
 
-from model import Net, train_nn, test_nn
+from dataset import (
+    load_csv_data,
+    instantiate_partitioner,
+    train_test_split,
+    transform_dataset_to_dmatrix,
+    resplit,
+)
+from utils import client_args_parser, BST_PARAMS, NUM_LOCAL_ROUND
+from client_utils import XgbClient
 
-class FlowerClient(fl.client.NumPyClient):
-    def __init__(self,
-                 trainloader,
-                 valloader,
-                 testloader,
-                 num_classes, input_dim) -> None:
-        super().__init__()
+warnings.filterwarnings("ignore", category=UserWarning)
 
-        self.trainloader = trainloader
-        self.valloader = valloader
-        self.testloader = testloader
-
-        self.model = Net(num_classes, input_dim)
-
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-    def set_parameters(self, parameters):
-
-        params_dict = zip(self.model.state_dict().keys(), parameters)
-
-        state_dict = OrderedDict({k: torch.Tensor(v) for k, v in params_dict})
-
-        self.model.load_state_dict(state_dict, strict=True)
+def get_latest_csv(directory: str) -> str:
+    csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+    latest_file = max(csv_files, key=lambda x: os.path.getctime(os.path.join(directory, x)))
+    return os.path.join(directory, latest_file)
     
-    
-    def get_parameters(self, config: Dict[str, Scalar]):
-        
-        return [ val.cpu().numpy() for _, val in self.model.state_dict().items()]
+# Parse arguments for experimental settings
+args = client_args_parser()
 
-    
-    def fit(self, parameters, config):
+# Train method (bagging or cyclic)
+train_method = args.train_method
 
-        # copy parameters sent by the server into client's local model
-        self.set_parameters(parameters)
+# Load CSV dataset
+csv_file_path = get_latest_csv("/home/mohamed/Desktop/test_repo/data")
+dataset = load_csv_data(csv_file_path)
 
-        lr = config['lr']
-        momentum = config['momentum']
-        epochs = config['local_epochs']
-        # Define the optimizer (e.g., Adam)
-        
-        optim = torch.optim.SGD(self.model.parameters(), lr=lr, momentum=momentum)
+# Conduct partitioning
+partitioner = instantiate_partitioner(
+    partitioner_type=args.partitioner_type, num_partitions=args.num_partitions
+)
+fds = dataset
 
-        # do local training
-        train_nn(self.model, self.trainloader, self.testloader, optim, epochs, self.device)
+# Load the partition for this `partition_id`
+log(INFO, "Loading partition...")
+partition = fds["train"]
+partition.set_format("numpy")
 
-        return self.get_parameters({}), len(self.trainloader), {}
-    
-    
-    def evaluate(self, parameters: NDArrays, config: Dict[str, Scalar]):
-        
-        self.set_parameters(parameters)
+if args.centralised_eval:
+    # Use centralised test set for evaluation
+    train_data = partition
+    valid_data = fds["test"]
+    valid_data.set_format("numpy")
+    num_train = train_data.shape[0]
+    num_val = valid_data.shape[0]
+else:
+    # Train/test splitting
+    train_data, valid_data, num_train, num_val = train_test_split(
+        partition, test_fraction=args.test_fraction, seed=args.seed
+    )
 
-        loss, accuarcy = test_nn(self.model, self.valloader, self.device)
-        
-        return float(loss), len(self.valloader), {'accuarcy': accuarcy}
-    
+# Reformat data to DMatrix for xgboost
+log(INFO, "Reformatting data...")
+train_dmatrix = transform_dataset_to_dmatrix(train_data)
+valid_dmatrix = transform_dataset_to_dmatrix(valid_data)
 
+# Hyper-parameters for xgboost training
+num_local_round = NUM_LOCAL_ROUND
+params = BST_PARAMS
 
-def generate_client_fn(trainloaders, valloaders, testloader, num_classes, input_dim):
+# Setup learning rate
+if args.train_method == "bagging" and args.scaled_lr:
+    new_lr = params["eta"] / args.num_partitions
+    params.update({"eta": new_lr})
 
-    def client_fn(cid: str):
-
-        return FlowerClient(trainloader=trainloaders[int(cid)],
-                            valloader=valloaders[int(cid)],
-                            testloader=testloader,
-                            num_classes=num_classes,
-                            input_dim=input_dim)
-
-
-    return client_fn
+# Start Flower client
+fl.client.start_client(
+    server_address="127.0.0.1:8080",
+    client=XgbClient(
+        train_dmatrix,
+        valid_dmatrix,
+        num_train,
+        num_val,
+        num_local_round,
+        params,
+        train_method,
+    ),
+)

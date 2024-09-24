@@ -1,88 +1,113 @@
-import torch
-from torch.utils.data import Dataset, DataLoader, random_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
-from sklearn.compose import ColumnTransformer
+import xgboost as xgb
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.compose import ColumnTransformer
+from datasets import Dataset, DatasetDict, concatenate_datasets
+from flwr_datasets.partitioner import (
+    IidPartitioner,
+    LinearPartitioner,
+    SquarePartitioner,
+    ExponentialPartitioner,
+)
+from typing import Union
 
-class PreprocessedCSVDataset(Dataset):
-    def __init__(self, csv_file, transform=None):
-        # Load and preprocess data
-        self.data = pd.read_csv(csv_file)
-        
-        # Define categorical and numerical features
-        self.categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
-        self.numerical_features = ['id.orig_p', 'orig_pkts',	'orig_ip_bytes',	'resp_pkts', 'missed_bytes'
-        , 'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
-        
-        # Define the column transformer
-        self.preprocessor = ColumnTransformer(
-            transformers=[
-                ('num', StandardScaler(), self.numerical_features),
-                ('cat', OneHotEncoder(handle_unknown='ignore'), self.categorical_features)
-            ]
-        )
-        
-        # Separate features and labels
-        self.features = self.data.drop(columns=['label', 'ts'])
-        self.labels = self.data['label']
-        self.label_encoder = LabelEncoder()
-        self.labels_encoded = self.label_encoder.fit_transform(self.labels)
-        
-        # Fit and transform the features
-        self.features_transformed = self.preprocessor.fit_transform(self.features)
-        self.input_dim = self.features_transformed.shape[1]  # Define input_dim based on the transformed features' shape
-        self.transform = transform
+CORRELATION_TO_PARTITIONER = {
+    "uniform": IidPartitioner,
+    "linear": LinearPartitioner,
+    "square": SquarePartitioner,
+    "exponential": ExponentialPartitioner,
+}
 
-    def __len__(self):
-        return len(self.data)
+def load_csv_data(file_path: str) -> DatasetDict:
+    """Load CSV data into a DatasetDict format."""
+    df = pd.read_csv(file_path)
+    dataset = Dataset.from_pandas(df)
+    return DatasetDict({"train": dataset, "test": dataset})
 
-    def __getitem__(self, idx):
-        features = self.features_transformed[idx].astype('float32').todense()
-        features = np.asarray(features).flatten()
-        label = self.labels_encoded[idx]
-        if self.transform:
-            features = self.transform(features)
-        return torch.tensor(features), torch.tensor(label, dtype=torch.long)
-
-def get_csv_dataset(csv_file: str, transform=None):
-    dataset = PreprocessedCSVDataset(csv_file, transform=transform)
-    return dataset
-
-def prepare_dataset(num_partitions: int, batch_size: int, num_classes: int, val_ratio: float = 0.1, csv_file: str = 'data/zeek_live_data_final2.csv'):
-    # Load and preprocess the dataset
-    dataset = get_csv_dataset(csv_file)
+def instantiate_partitioner(partitioner_type: str, num_partitions: int):
+    """Initialise partitioner based on selected partitioner type and number of
+    partitions."""
+    partitioner = CORRELATION_TO_PARTITIONER[partitioner_type](
+        num_partitions=num_partitions
+    )
+    return partitioner
     
-    # Check if dataset is loaded
-    print(f"Total number of samples: {len(dataset)}")
-
-    # Ensure no partition is empty by adjusting the partition lengths
-    num_images = len(dataset) // num_partitions
-    remainder = len(dataset) % num_partitions
-    partition_len = [num_images + 1 if i < remainder else num_images for i in range(num_partitions)]
+def preprocess_data(data: pd.DataFrame):
+    """Preprocess data by encoding categorical features and scaling numerical features."""
+    # Define categorical and numerical features
+    categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
+    numerical_features = ['id.orig_p', 'orig_pkts', 'orig_ip_bytes', 'resp_pkts', 'missed_bytes',
+                          'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
     
-    # Ensure that no partition length is zero
-    partition_len = [length for length in partition_len if length > 0]
+    # Define the column transformer
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), numerical_features),
+            ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+        ]
+    )
     
-    datasets = random_split(dataset, partition_len, torch.Generator().manual_seed(2024))
-
-    # Creating train and validation loaders
-    trainloaders = []
-    valloaders = []
-    for dataset_ in datasets:
-        num_total = len(dataset_)
-        num_val = int(val_ratio * num_total)
-        num_train = num_total - num_val
-
-        if num_train == 0:
-            continue  # Skip if no training data
-        
-        for_train, for_val = random_split(dataset_, [num_train, num_val], torch.Generator().manual_seed(2024))
-
-        trainloaders.append(DataLoader(for_train, batch_size=batch_size, shuffle=True, num_workers=2))
-        valloaders.append(DataLoader(for_val, batch_size=batch_size, shuffle=False, num_workers=2))
-
-    # Creating test loader
-    testloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=2)
+    # Separate features and labels
+    features = data.drop(columns=['label', 'ts'])
+    labels = data['label']
+    label_encoder = LabelEncoder()
+    labels_encoded = label_encoder.fit_transform(labels)
     
-    return trainloaders, valloaders, testloader, dataset.input_dim
+    # Fit and transform the features
+    features_transformed = preprocessor.fit_transform(features)
+    
+    return features_transformed, labels_encoded
+
+def train_test_split(partition: Dataset, test_fraction: float, seed: int):
+    """Split the data into train and validation set given split rate."""
+    train_test = partition.train_test_split(test_size=test_fraction, seed=seed)
+    partition_train = train_test["train"]
+    partition_test = train_test["test"]
+
+    num_train = len(partition_train)
+    num_test = len(partition_test)
+
+    return partition_train, partition_test, num_train, num_test
+
+def transform_dataset_to_dmatrix(data: Union[Dataset, DatasetDict]) -> xgb.DMatrix:
+    """Transform dataset to DMatrix format for xgboost."""
+    x, y = separate_xy(data)
+    # Reshape x to 2D if it's not already
+    if len(x.shape) > 2:
+        x = x.reshape(x.shape[0], -1)
+    new_data = xgb.DMatrix(x, label=y)
+    return new_data
+
+def separate_xy(data: Union[Dataset, DatasetDict]):
+    """Return outputs of x (data) and y (labels)."""
+    x, y = preprocess_data(data.to_pandas())
+    return x, y
+
+def resplit(dataset: DatasetDict) -> DatasetDict:
+    """Increase the quantity of centralised test samples from 10K to 20K by taking from the training set."""
+    train_size = dataset["train"].num_rows
+    test_size = dataset["test"].num_rows
+    
+    # Ensure we don't exceed the number of samples in the training set
+    additional_test_samples = min(10000, train_size)
+    
+    return DatasetDict(
+        {
+            "train": dataset["train"].select(
+                range(0, train_size - additional_test_samples)
+            ),
+            "test": concatenate_datasets(
+                [
+                    dataset["train"].select(
+                        range(
+                            train_size - additional_test_samples,
+                            train_size,
+                        )
+                    ),
+                    dataset["test"],
+                ]
+            ),
+        }
+    )
+

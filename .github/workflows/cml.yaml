@@ -37,6 +37,6 @@ jobs:
           pip install torchaudio
           pip install hydra-core
           pip install -r requirements.txt
-          python main.py
+          python sim.py --train-method=bagging --pool-size=5 --num-clients-per-round=5 --num-rounds=30 --centralised-eval
 
     
