@@ -8,7 +8,7 @@ sleep 15  # Sleep for 15s to give the server enough time to start
 
 for i in `seq 0 4`; do
     echo "Starting client $i"
-    python3 client.py --partition-id=$i --train-method=cyclic --num-partitions=5 --partitioner-type=exponential &
+    python3 client.py --partition-id=$i --train-method=cyclic --num-partitions=5 --partitioner-type=uniform &
 done
 
 # Enable CTRL+C to stop all background processes
