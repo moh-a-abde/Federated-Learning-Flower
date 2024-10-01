@@ -49,7 +49,7 @@ def preprocess_data(data: pd.DataFrame):
     )
     
     # Separate features and labels
-    features = data.drop(columns=['label', 'ts'])
+    features = data.drop(columns=['label'])
     labels = data['label']
     label_encoder = LabelEncoder()
     labels_encoded = label_encoder.fit_transform(labels)
