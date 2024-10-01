@@ -36,7 +36,7 @@ def instantiate_partitioner(partitioner_type: str, num_partitions: int):
 def preprocess_data(data: pd.DataFrame):
     """Preprocess data by encoding categorical features and scaling numerical features."""
     # Define categorical and numerical features
-    categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'uid', 'conn_state']
+    categorical_features = ['id.orig_h', 'id.resp_h', 'proto', 'history', 'conn_state']
     numerical_features = ['id.orig_p', 'orig_pkts', 'orig_ip_bytes', 'resp_pkts', 'missed_bytes',
                           'local_resp', 'local_orig', 'resp_bytes', 'orig_bytes', 'duration', 'id.resp_p']
     
