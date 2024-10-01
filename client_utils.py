@@ -118,17 +118,16 @@ class XgbClient(fl.client.Client):
         f1 = f1_score(y_true, y_pred_labels, average='weighted')
         
         # Compute logloss or another relevant loss
-        #loss = bst.eval(self.valid_dmatrix).split(":")[1]
+        loss = bst.eval(self.valid_dmatrix).split(":")[1]
 
         global_round = ins.config["global_round"]
-        log(INFO, f"Precision = {precision}, Recall = {recall}, F1 Score = {f1} at round {global_round}")
-# , Loss = {loss}
+        log(INFO, f"Precision = {precision}, Recall = {recall}, F1 Score = {f1} at round {global_round}, Loss = {loss} at round {global_round}")
         return EvaluateRes(
             status=Status(
                 code=Code.OK,
                 message="OK",
             ),
-            #loss=float(loss),
+            loss=float(loss),
             num_examples=self.num_val,
             metrics={
                 "precision": precision,
